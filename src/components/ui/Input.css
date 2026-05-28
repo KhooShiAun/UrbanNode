@@ -1,0 +1,72 @@
+.un-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.un-field__label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-on-surface);
+}
+
+.un-field__control {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius);
+  background: var(--color-surface-container-low);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.un-field__control:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.un-field--error .un-field__control {
+  border-color: var(--color-error);
+}
+
+.un-field--error .un-field__control:focus-within {
+  box-shadow: 0 0 0 1px var(--color-error);
+}
+
+.un-field__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+  color: var(--color-on-surface-variant);
+  flex-shrink: 0;
+}
+
+.un-field__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.un-field__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 12px 14px;
+  font: inherit;
+  color: var(--color-on-surface);
+  outline: none;
+  min-width: 0;
+}
+
+.un-field__input::placeholder {
+  color: var(--color-outline);
+}
+
+.un-field__helper {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.un-field__error {
+  font-size: var(--text-sm);
+  color: var(--color-error);
+}
