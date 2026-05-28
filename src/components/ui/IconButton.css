@@ -1,0 +1,70 @@
+.un-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  color: var(--color-on-surface-variant);
+  padding: 0;
+}
+
+.un-icon-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.un-icon-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.un-icon-button--sm {
+  width: 28px;
+  height: 28px;
+}
+
+.un-icon-button--md {
+  width: 36px;
+  height: 36px;
+}
+
+.un-icon-button--lg {
+  width: 44px;
+  height: 44px;
+}
+
+.un-icon-button--primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.un-icon-button--primary:hover:not(:disabled) {
+  background: var(--color-primary-container);
+}
+
+.un-icon-button--secondary {
+  background: var(--color-surface-container-lowest);
+  border-color: var(--color-outline-variant);
+  color: var(--color-on-surface);
+}
+
+.un-icon-button--secondary:hover:not(:disabled) {
+  background: var(--color-surface-container-low);
+}
+
+.un-icon-button--ghost {
+  background: transparent;
+}
+
+.un-icon-button--ghost:hover:not(:disabled) {
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface);
+}
+
+.un-icon-button svg {
+  width: 60%;
+  height: 60%;
+}

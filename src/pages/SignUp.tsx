@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthLayout } from '../components/AuthLayout'
+import { Button, Input } from '@/components/ui'
 import './auth.css'
 
 type Errors = {
@@ -48,87 +49,73 @@ export function SignUp() {
         <p className="auth-subhead">Join UrbanNode to start tracking maintenance in your area.</p>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate>
-        <div className={`field ${errors.fullName ? 'has-error' : ''}`}>
-          <label htmlFor="fullName">Full Name</label>
-          <div className="control">
+      <form onSubmit={handleSubmit} noValidate className="auth-form">
+        <Input
+          id="fullName"
+          label="Full Name"
+          type="text"
+          placeholder="Jane Doe"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          autoComplete="name"
+          error={errors.fullName}
+          iconLeft={
             <svg aria-hidden="true">
               <use href="/icons.svg#user-icon" />
             </svg>
-            <input
-              id="fullName"
-              type="text"
-              placeholder="Jane Doe"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              autoComplete="name"
-            />
-          </div>
-          {errors.fullName && <span className="error">{errors.fullName}</span>}
-        </div>
+          }
+        />
 
-        <div className={`field ${errors.email ? 'has-error' : ''}`} style={{ marginTop: 16 }}>
-          <label htmlFor="email">Email Address</label>
-          <div className="control">
+        <Input
+          id="email"
+          label="Email Address"
+          type="email"
+          placeholder="jane@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
+          error={errors.email}
+          iconLeft={
             <svg aria-hidden="true">
               <use href="/icons.svg#mail-icon" />
             </svg>
-            <input
-              id="email"
-              type="email"
-              placeholder="jane@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-            />
-          </div>
-          {errors.email && <span className="error">{errors.email}</span>}
-        </div>
+          }
+        />
 
-        <div className={`field ${errors.password ? 'has-error' : ''}`} style={{ marginTop: 16 }}>
-          <label htmlFor="password">Password</label>
-          <div className="control">
+        <Input
+          id="password"
+          label="Password"
+          type="password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="new-password"
+          error={errors.password}
+          helperText="Must be at least 8 characters long."
+          iconLeft={
             <svg aria-hidden="true">
               <use href="/icons.svg#lock-icon" />
             </svg>
-            <input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="new-password"
-            />
-          </div>
-          {errors.password ? (
-            <span className="error">{errors.password}</span>
-          ) : (
-            <span className="helper">Must be at least 8 characters long.</span>
-          )}
-        </div>
+          }
+        />
 
-        <div
-          className={`field ${errors.confirmPassword ? 'has-error' : ''}`}
-          style={{ marginTop: 16 }}
-        >
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <div className="control">
+        <Input
+          id="confirmPassword"
+          label="Confirm Password"
+          type="password"
+          placeholder="••••••••"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          autoComplete="new-password"
+          error={errors.confirmPassword}
+          iconLeft={
             <svg aria-hidden="true">
               <use href="/icons.svg#lock-icon" />
             </svg>
-            <input
-              id="confirmPassword"
-              type="password"
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              autoComplete="new-password"
-            />
-          </div>
-          {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
-        </div>
+          }
+        />
 
-        <label className="terms" style={{ marginTop: 24 }}>
+        <label className="terms">
           <input
             type="checkbox"
             checked={agreed}
@@ -136,13 +123,13 @@ export function SignUp() {
           />
           <span>
             I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-            {errors.agreed && <span className="error">{errors.agreed}</span>}
+            {errors.agreed && <span className="terms__error">{errors.agreed}</span>}
           </span>
         </label>
 
-        <button type="submit" className="submit" style={{ marginTop: 24 }}>
-          Sign Up <span aria-hidden="true">→</span>
-        </button>
+        <Button type="submit" size="lg" fullWidth iconRight={<span aria-hidden="true">→</span>}>
+          Sign Up
+        </Button>
       </form>
 
       <p className="auth-footer">
