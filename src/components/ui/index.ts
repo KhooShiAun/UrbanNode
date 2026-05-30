@@ -21,3 +21,12 @@ export type { AvatarProps } from './Avatar'
 
 export { EmptyState } from './EmptyState'
 export type { EmptyStateProps } from './EmptyState'
+
+export { Spinner } from './Spinner'
+export type { SpinnerProps } from './Spinner'
+
+export { Modal } from './Modal'
+export type { ModalProps } from './Modal'
+
+export { ToastProvider, useToast } from './Toast'
+export type { ToastType } from './Toast'

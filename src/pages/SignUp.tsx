@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthLayout } from '../components/AuthLayout'
-import { Button, Input } from '@/components/ui'
+import { Button, Input, useToast } from '@/components/ui'
 import './auth.css'
 
 type Errors = {
@@ -14,14 +14,16 @@ type Errors = {
 
 export function SignUp() {
   const navigate = useNavigate()
+  const { showToast } = useToast()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [agreed, setAgreed] = useState(false)
   const [errors, setErrors] = useState<Errors>({})
+  const [submitting, setSubmitting] = useState(false)
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     const next: Errors = {}
     if (!fullName.trim()) next.fullName = 'Please enter your name.'
@@ -34,8 +36,34 @@ export function SignUp() {
     if (!agreed) next.agreed = 'You must agree to the Terms of Service and Privacy Policy.'
 
     setErrors(next)
-    if (Object.keys(next).length === 0) {
-      navigate('/signin')
+    if (Object.keys(next).length > 0) return
+
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        // Public sign-up creates resident accounts; workers are provisioned by the city.
+        body: JSON.stringify({ full_name: fullName, email, password, role: 'resident' }),
+      })
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        if (res.status === 409) {
+          setErrors({ email: data.error ?? 'That email is already registered.' })
+        } else {
+          showToast(data.error ?? 'Unable to create account. Please try again.', 'error')
+        }
+        return
+      }
+
+      showToast('Account created! Welcome to UrbanNode.', 'success')
+      navigate(data.role === 'worker' ? '/worker/dashboard' : '/home')
+    } catch {
+      showToast('Network error. Please check your connection and try again.', 'error')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -127,7 +155,13 @@ export function SignUp() {
           </span>
         </label>
 
-        <Button type="submit" size="lg" fullWidth iconRight={<span aria-hidden="true">→</span>}>
+        <Button
+          type="submit"
+          size="lg"
+          fullWidth
+          loading={submitting}
+          iconRight={<span aria-hidden="true">→</span>}
+        >
           Sign Up
         </Button>
       </form>

@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { ProtectedRoute } from './components/ProtectedRoute'
 import { ResidentLayout } from './components/layouts/ResidentLayout'
 import { WorkerLayout } from './components/layouts/WorkerLayout'
 import { SignUp } from './pages/SignUp'
@@ -29,7 +30,13 @@ function App() {
       <Route path="/signin" element={<SignIn />} />
       <Route path="/styleguide" element={<Styleguide />} />
 
-      <Route element={<ResidentLayout />}>
+      <Route
+        element={
+          <ProtectedRoute requiredRole="resident">
+            <ResidentLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route path="/home" element={<Home />} />
         <Route path="/reports" element={<MyReports />} />
         <Route path="/reports/new" element={<ReportNew />} />
@@ -40,7 +47,13 @@ function App() {
         <Route path="/help" element={<Help />} />
       </Route>
 
-      <Route element={<WorkerLayout />}>
+      <Route
+        element={
+          <ProtectedRoute requiredRole="worker">
+            <WorkerLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route path="/worker/dashboard" element={<Dashboard />} />
         <Route path="/worker/kanban" element={<Kanban />} />
         <Route path="/worker/all-reports" element={<AllReports />} />

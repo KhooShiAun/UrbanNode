@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UrbanNode — Project Audit</title>
+<style>
+  :root {
+    --ink: #1a1f29;
+    --muted: #5b6573;
+    --line: #e3e7ee;
+    --accent: #1f6feb;
+    --red: #c0392b;
+    --amber: #b9770e;
+    --green: #1e8e4e;
+    --bg-soft: #f6f8fb;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "Segoe UI", -apple-system, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    line-height: 1.5;
+    font-size: 11.5px;
+    margin: 0;
+    padding: 0;
+  }
+  .page { padding: 0 4px; }
+  h1 {
+    font-size: 25px;
+    margin: 0 0 2px;
+    letter-spacing: -0.4px;
+  }
+  .sub { color: var(--muted); font-size: 12px; margin: 0 0 14px; }
+  h2 {
+    font-size: 15px;
+    margin: 22px 0 8px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid var(--accent);
+    color: var(--accent);
+  }
+  h3 { font-size: 12.5px; margin: 14px 0 6px; }
+  p { margin: 6px 0; }
+  ul { margin: 6px 0; padding-left: 20px; }
+  li { margin: 3px 0; }
+  code {
+    font-family: "Cascadia Code", Consolas, monospace;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0.5px 4px;
+    font-size: 10.5px;
+    color: #b5267a;
+  }
+  pre {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 9.8px;
+    line-height: 1.45;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  pre code { background: none; border: none; padding: 0; color: var(--ink); }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 8px 0;
+    font-size: 10.5px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 5px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--bg-soft); font-weight: 600; }
+  tr:nth-child(even) td { background: #fafbfd; }
+  .callout {
+    border-left: 4px solid var(--red);
+    background: #fdf3f2;
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    margin: 10px 0;
+  }
+  .ok { color: var(--green); font-weight: 600; }
+  .warn { color: var(--amber); font-weight: 600; }
+  .bad { color: var(--red); font-weight: 600; }
+  .verdict {
+    margin: 14px 0;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: #fdf3f2;
+    border: 1px solid #f3c9c4;
+    font-size: 13px;
+  }
+  .verdict strong { color: var(--red); }
+  .footer {
+    margin-top: 26px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 9.5px;
+  }
+  h2 { break-after: avoid; }
+  table, pre, .callout, .verdict { break-inside: avoid; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>UrbanNode — Project Audit</h1>
+<p class="sub">Generated 2026-05-30 &nbsp;·&nbsp; branch <code>feat/foundation-cc-16</code></p>
+
+<div class="callout">
+<strong>Headline finding:</strong> The backend is a <strong>non-functional skeleton</strong>.
+<code>server/index.ts</code> and <code>server/db.ts</code> import six files that <strong>do not exist on disk</strong>
+(<code>schema.ts</code>, <code>seed.ts</code>, <code>middleware.ts</code>, and the entire <code>routes/</code> folder is empty).
+The server <strong>will crash on startup</strong>. The README describes a backend that hasn't been written yet.
+</div>
+
+<h2>1. Project Structure</h2>
+<p><strong>Layout:</strong> Single repo, <strong>not</strong> a separate frontend/backend split. One root <code>package.json</code>
+drives both the Vite/React client (<code>src/</code>) and the Express server (<code>server/</code>), run together via
+<code>pnpm dev</code> (<code>npm-run-all --parallel</code>). Effectively a "single-package monorepo."</p>
+
+<pre><code>UrbanNode/
+├── .env                    (untracked — local only ✓)
+├── .env.example            ✓
+├── .gitignore              ✓
+├── README.md               ✓ (thorough)
+├── package.json            ✓
+├── vite.config.ts          ✓ (alias @→src, proxy /api→:3001)
+├── tsconfig.{json,app,node,server}.json  ✓
+├── eslint.config.js        ✓
+├── index.html
+├── public/                 favicon.svg, icons.svg
+├── server/
+│   ├── index.ts            ✓ Express entry
+│   ├── db.ts               ✓ pg Pool + Drizzle
+│   ├── schema.ts           ✗ MISSING (imported by db.ts & index.ts)
+│   ├── seed.ts             ✗ MISSING (referenced by db:seed script)
+│   ├── middleware.ts       ✗ MISSING (per README)
+│   └── routes/             ✗ EMPTY (auth, me, reports, notifications, gamification missing)
+└── src/
+    ├── App.tsx             ✓ all routes
+    ├── main.tsx, index.css, App.css
+    ├── components/
+    │   ├── AuthLayout.tsx, Logo.tsx, icons.tsx
+    │   ├── layouts/        ResidentLayout, WorkerLayout, SidebarLayout
+    │   └── ui/             8 primitives (see §2)
+    └── pages/
+        ├── SignIn.tsx, SignUp.tsx, Styleguide.tsx
+        ├── _placeholder/PlaceholderPage.tsx
+        ├── resident/       8 screens (all stubs)
+        └── worker/         7 screens (all stubs)</code></pre>
+
+<ul>
+<li><span class="ok">.gitignore:</span> Exists and well-formed. Covers <code>node_modules</code>, <code>dist</code>/<code>dist-ssr</code>, <code>.env</code>, <code>*.local</code>, logs. Confirmed <code>.env</code> is <strong>not</strong> tracked.</li>
+<li><span class="ok">README.md:</span> Exists and is genuinely good — install, Neon Postgres setup, <code>db:push</code>, <code>db:seed</code>, dev servers, demo credentials. <span class="bad">But it describes files that don't exist yet</span>, so following it end-to-end fails at <code>pnpm db:push</code> and the server half of <code>pnpm dev</code>.</li>
+</ul>
+
+<h2>2. Frontend Audit</h2>
+<table>
+<tr><th>Item</th><th>Status</th><th>Notes</th></tr>
+<tr><td>React + TypeScript</td><td class="ok">✅</td><td>React 19.2, TypeScript ~6.0, <code>@vitejs/plugin-react</code></td></tr>
+<tr><td><strong>Tailwind CSS</strong></td><td class="bad">❌ NOT used</td><td>No <code>tailwind.config</code>, no <code>postcss.config</code>, not in deps. Styling is hand-written CSS with design tokens (<code>index.css</code>) + per-component <code>.css</code> files. Deliberate, but <strong>not</strong> Tailwind.</td></tr>
+<tr><td>React Router</td><td class="ok">✅</td><td><code>react-router-dom</code> 7.15, routes defined (below)</td></tr>
+<tr><td>Citizen/Resident sidebar layout</td><td class="ok">✅</td><td><code>ResidentLayout.tsx</code> — persistent sidebar + "Report Issue" CTA</td></tr>
+<tr><td>City Worker sidebar layout</td><td class="ok">✅</td><td><code>WorkerLayout.tsx</code> — persistent sidebar</td></tr>
+<tr><td>Shared top header bar</td><td class="ok">✅</td><td><code>SidebarLayout.tsx</code> renders top-bar slot; worker injects search + avatar</td></tr>
+<tr><td>Shared component library</td><td class="warn">✅ partial</td><td><code>src/components/ui/</code> — see below</td></tr>
+<tr><td><strong>Role-based protected routing</strong></td><td class="bad">❌ Not implemented</td><td>Layouts are purely visual. No auth guard, no role check, no redirect. SignIn just <code>navigate()</code>s by which button is clicked — no auth at all.</td></tr>
+<tr><td>Empty page placeholders</td><td class="ok">✅</td><td>All 15 screens exist as stubs</td></tr>
+</table>
+
+<h3>Defined routes (<code>App.tsx</code>)</h3>
+<ul>
+<li><strong>Public:</strong> <code>/</code> → redirects to <code>/signup</code>, <code>/signup</code>, <code>/signin</code>, <code>/styleguide</code></li>
+<li><strong>Resident</strong> (under ResidentLayout): <code>/home</code>, <code>/reports</code>, <code>/reports/new</code>, <code>/reports/:id</code>, <code>/community</code>, <code>/notifications</code>, <code>/profile</code>, <code>/help</code></li>
+<li><strong>Worker</strong> (under WorkerLayout): <code>/worker/dashboard</code>, <code>/worker/kanban</code>, <code>/worker/all-reports</code>, <code>/worker/uncategorised</code>, <code>/worker/notifications</code>, <code>/worker/profile</code>, <code>/worker/tickets/:id</code></li>
+</ul>
+
+<h3>Shared UI components found</h3>
+<p><span class="ok">✅ Present:</span> Button, IconButton, Input, Card, Badge, Tag, Avatar, EmptyState</p>
+<p><span class="bad">❌ Missing from requested list:</span> Modal/Dialog, Toast/notification, Spinner/Skeleton loading state (EmptyState exists but is not a loading indicator)</p>
+
+<h3>Placeholder pages — all 15 exist (every one renders "Coming soon")</h3>
+<ul>
+<li><strong>Resident:</strong> Home (R3), MyReports (R4), ReportDetail (R5), ReportNew (R6), Community (R7), Notifications (R8), Profile (R9), Help</li>
+<li><strong>Worker:</strong> Dashboard (W2), Kanban (W3), AllReports (W4), Uncategorised (W5), Notifications (W6), Profile (W7), TicketDetail (W8)</li>
+<li>None missing — but none have real content either.</li>
+</ul>
+
+<h2>3. Backend Audit</h2>
+<table>
+<tr><th>Item</th><th>Status</th><th>Notes</th></tr>
+<tr><td>Node.js + Express</td><td class="ok">✅ deps</td><td><code>express</code> 4.21 installed; entry <code>server/index.ts</code></td></tr>
+<tr><td><strong>Server actually runs</strong></td><td class="bad">❌ NO</td><td>Imports <code>routes/{auth,me,reports,notifications,gamification}.ts</code> and <code>schema.ts</code> — none exist. <code>tsx watch</code> throws <code>ERR_MODULE_NOT_FOUND</code> immediately.</td></tr>
+<tr><td>.env / .env.example</td><td class="ok">✅ both</td><td>Keys (no values): <code>DATABASE_URL</code>, <code>SESSION_SECRET</code>, <code>PORT</code></td></tr>
+<tr><td>CORS configured</td><td class="bad">❌</td><td>No <code>cors</code> package. Relies on Vite dev proxy (<code>/api</code> → <code>:3001</code>). Needs CORS (or same-origin serving) for any split deployment.</td></tr>
+<tr><td><strong>JWT auth middleware</strong></td><td class="bad">❌ No JWT</td><td>Architecture uses <code>express-session</code> + <code>connect-pg-simple</code> (cookie sessions in Postgres), not JWT. Promised <code>requireAuth/requireWorker/requireResident</code> live in <code>middleware.ts</code> which doesn't exist.</td></tr>
+<tr><td><code>POST /auth/register</code></td><td class="bad">❌</td><td>No routes exist. Intended design is <code>/api/auth/signup</code> — unwritten.</td></tr>
+<tr><td><code>POST /auth/login</code></td><td class="bad">❌</td><td>Intended as <code>/api/auth/signin</code> — unwritten.</td></tr>
+<tr><td><code>POST /auth/forgot-password</code></td><td class="bad">❌</td><td>Not designed or written anywhere.</td></tr>
+<tr><td>Global error-handling middleware</td><td class="ok">✅</td><td>Present in <code>index.ts</code> — logs, returns 500 JSON</td></tr>
+<tr><td>Other routes</td><td class="warn">partial</td><td>Only <code>/api/health</code> is real. Routers are mounted but their files don't exist.</td></tr>
+</table>
+
+<div class="callout">
+<strong>⚠ Local <code>.env</code> issue:</strong> <code>DATABASE_URL=npg_1pqVmruablB3</code> is <strong>not a valid Postgres connection string</strong>
+(not a <code>postgres://…</code> URL). The DB will not connect with this value.
+</div>
+
+<h2>4. Database Audit</h2>
+<table>
+<tr><th>Item</th><th>Status</th></tr>
+<tr><td>PostgreSQL connected</td><td class="warn">⚠ Configured but unverified — schema import missing &amp; local URL malformed</td></tr>
+<tr><td>Migration / schema files</td><td class="bad">❌ None — no <code>schema.ts</code>, no <code>drizzle.config.ts</code>, no <code>migrations/</code></td></tr>
+<tr><td>Tables defined</td><td class="bad">❌ Zero</td></tr>
+<tr><td>Seed file</td><td class="bad">❌ <code>server/seed.ts</code> does not exist</td></tr>
+</table>
+
+<h3>Requested tables — every one is MISSING (no schema file exists at all)</h3>
+<ul>
+<li class="bad">❌ <code>users</code> (id, name, email, password_hash, role, created_at)</li>
+<li class="bad">❌ <code>reports</code> (id, user_id, description, location, severity, status, sla_deadline, created_at)</li>
+<li class="bad">❌ <code>notifications</code> (id, user_id, message, is_read, created_at)</li>
+<li class="bad">❌ <code>bear_progress</code> (id, user_id, level, total_resolved, gear_unlocked)</li>
+<li class="bad">❌ <code>gear_items</code> (id, name, unlock_condition, asset_url)</li>
+<li class="bad">❌ <code>report_timeline</code> (id, report_id, status, changed_by, changed_at, notes)</li>
+</ul>
+<p class="sub">(README hints at slightly different names — e.g. <code>full_name</code>, a <code>ref</code> column on reports — but moot since no schema exists.)</p>
+
+<h2>5. AI Setup Audit</h2>
+<table>
+<tr><th>Item</th><th>Status</th></tr>
+<tr><td>Gemini API key placeholder in .env / .env.example</td><td class="bad">❌ Not present in either file</td></tr>
+<tr><td>AI service file</td><td class="bad">❌ Does not exist (no Gemini / <code>@google/generative-ai</code> reference anywhere)</td></tr>
+<tr><td>AI function (input/output)</td><td class="bad">❌ N/A</td></tr>
+<tr><td>Fallback handler for AI failure</td><td class="bad">❌ N/A</td></tr>
+</table>
+<p>The entire AI layer is unstarted — no dependency, no key, no service, no fallback.</p>
+
+<h2>6. GitHub &amp; Git Audit</h2>
+<ul>
+<li><span class="ok">✅ <code>.git</code> exists</span> — repo initialised, active branch <code>feat/foundation-cc-16</code>, history present (PRs #2–#4 merged).</li>
+<li><span class="ok">✅ <code>.gitignore</code> present and well-configured</span> — <code>node_modules</code>, <code>dist</code>, <code>.env</code>, logs covered; <code>.env</code> confirmed untracked.</li>
+<li><span class="bad">❌ No branch-protection config or documentation</span> in the repo. No <code>CONTRIBUTING.md</code> or branch/PR workflow docs either.</li>
+</ul>
+
+<h2>7. Final Assessment</h2>
+
+<h3 class="ok">✅ COMPLETED (ready to use)</h3>
+<ul>
+<li>Vite + React 19 + TypeScript toolchain, ESLint, <code>@</code>→<code>src</code> alias, dev proxy</li>
+<li>Full client-side routing for all resident + worker screens</li>
+<li>Two persistent sidebar layouts (resident &amp; worker) + shared top-bar shell</li>
+<li>8 UI primitives: Button, IconButton, Input, Card, Badge, Tag, Avatar, EmptyState (+ Styleguide page)</li>
+<li>All 15 page stubs exist (placeholder "Coming soon")</li>
+<li>Design-token CSS system</li>
+<li>Express skeleton with session middleware, global error handler, working <code>/api/health</code></li>
+<li><code>.gitignore</code>, <code>.env.example</code>, thorough README</li>
+<li>Git repo initialised with clean history</li>
+</ul>
+
+<h3 class="bad">❌ MISSING OR INCOMPLETE (blocks team start)</h3>
+<ul>
+<li><span class="bad">🔴 Backend won't start</span> — <code>schema.ts</code>, <code>seed.ts</code>, <code>middleware.ts</code>, and <code>routes/{auth,me,reports,notifications,gamification}.ts</code> all imported but do not exist.</li>
+<li><span class="bad">🔴 No database schema</span> — zero tables; all six required tables missing; no <code>drizzle.config.ts</code>; <code>db:push</code> and <code>db:seed</code> both fail.</li>
+<li><span class="bad">🔴 No working auth</span> — no register/login/forgot-password; SignIn/SignUp visual-only. (Design is session-based, not JWT.)</li>
+<li><span class="bad">🔴 No role-based route protection</span> — anyone can open any worker/resident route.</li>
+<li><span class="warn">🟠 No AI layer</span> — no Gemini key, service, or fallback.</li>
+<li><span class="warn">🟠 Missing UI primitives</span> — Modal, Toast, Loading/Skeleton.</li>
+<li><span class="warn">🟠 No CORS</span> (fine for dev via proxy; needed before split deployment).</li>
+<li><span class="warn">🟡 Invalid local <code>DATABASE_URL</code></span> in <code>.env</code>.</li>
+<li><span class="warn">🟡 No branch-protection / contribution docs.</span></li>
+</ul>
+
+<div class="verdict">
+<strong>READY FOR TEAM? → NO.</strong>
+A teammate who clones this and follows the README gets a working <em>frontend</em>, but
+<code>pnpm db:push</code>, <code>pnpm db:seed</code>, and the server half of <code>pnpm dev</code> all crash because the files they depend on don't exist.
+The repo currently promises a backend it doesn't contain.
+</div>
+
+<h3>Minimum to complete before delegating</h3>
+<ol>
+<li>Create <code>server/schema.ts</code> with the six tables (Drizzle source of truth).</li>
+<li>Add <code>drizzle.config.ts</code> so <code>drizzle-kit push</code> works.</li>
+<li>Create the route files the entry point imports — at minimum <code>routes/auth.ts</code> (signup/signin/signout) — plus stubs for <code>me</code>, <code>reports</code>, <code>notifications</code>, <code>gamification</code> so the server boots.</li>
+<li>Create <code>server/middleware.ts</code> (<code>requireAuth/requireWorker/requireResident</code>).</li>
+<li>Create <code>server/seed.ts</code> (the two demo accounts + sample reports).</li>
+<li>Verify <code>pnpm dev</code> boots both client and server with no missing-module errors, and <code>db:push</code> + <code>db:seed</code> succeed against a valid <code>DATABASE_URL</code>.</li>
+<li>(Recommended) Add a client auth guard so role-based routes are actually protected.</li>
+</ol>
+<p>Items 5–9 in the missing list (AI, extra UI primitives, CORS, branch protection) can be parallelized to teammates <em>after</em> 1–6 make the project bootable.</p>
+
+<div class="footer">
+UrbanNode project audit · generated by Claude Code on 2026-05-30 · all findings verified against files on disk.
+</div>
+
+</div>
+</body>
+</html>
