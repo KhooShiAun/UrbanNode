@@ -1,20 +1,38 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthLayout } from '../components/AuthLayout'
-import { Button, Input } from '@/components/ui'
+import { Button, Input, useToast } from '@/components/ui'
 import './auth.css'
-
-type Role = 'resident' | 'worker'
 
 export function SignIn() {
   const navigate = useNavigate()
+  const { showToast } = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  function handleSubmit(role: Role) {
-    return (e: FormEvent) => {
-      e.preventDefault()
-      navigate(role === 'resident' ? '/home' : '/worker/dashboard')
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        showToast(data.error ?? 'Unable to sign in. Please try again.', 'error')
+        return
+      }
+
+      navigate(data.role === 'worker' ? '/worker/dashboard' : '/home')
+    } catch {
+      showToast('Network error. Please check your connection and try again.', 'error')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -25,12 +43,10 @@ export function SignIn() {
     >
       <div>
         <h1 className="auth-heading">Sign In</h1>
-        <p className="auth-subhead">
-          Authentication isn't wired up yet — pick a role below to preview the layout.
-        </p>
+        <p className="auth-subhead">Enter your credentials to continue.</p>
       </div>
 
-      <form onSubmit={handleSubmit('resident')} noValidate className="auth-form">
+      <form onSubmit={handleSubmit} noValidate className="auth-form">
         <Input
           id="email"
           label="Email Address"
@@ -61,18 +77,8 @@ export function SignIn() {
           }
         />
 
-        <Button type="submit" size="lg" fullWidth>
-          Sign in as City Resident
-        </Button>
-
-        <Button
-          type="button"
-          size="lg"
-          variant="secondary"
-          fullWidth
-          onClick={handleSubmit('worker')}
-        >
-          Sign in as City Worker
+        <Button type="submit" size="lg" fullWidth loading={submitting}>
+          Sign In
         </Button>
       </form>
 
