@@ -1,4 +1,4 @@
-# UrbanNode
+<!-- # UrbanNode
 
 City-maintenance reporting app. Residents submit issues, workers triage and resolve them.
 
@@ -109,4 +109,4 @@ src/
 ## What's next
 
 - **F4** — wire the SignUp / SignIn forms to call the real backend endpoints
-- Real screen content (R3–R9 and W1–W8 owners replace the route stubs in `src/pages/resident/` and `src/pages/worker/`)
+- Real screen content (R3–R9 and W1–W8 owners replace the route stubs in `src/pages/resident/` and `src/pages/worker/`) -->
