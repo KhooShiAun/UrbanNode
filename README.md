@@ -19,7 +19,7 @@ cd UrbanNode
 pnpm install
 ```
 
-**Step 3 — Set up your `.env` file**
+**Step 3 — Create a `.env` file inside the root folder**
 
 - Copy `.env.example` to `.env`
 - Ask the team lead for the `DATABASE_URL` value
