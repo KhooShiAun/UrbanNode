@@ -1,5 +1,5 @@
-import { PlaceholderPage } from '../_placeholder/PlaceholderPage'
+import { CommunityBearPage } from './CommunityBearPage'
 
 export function Community() {
-  return <PlaceholderPage title="Community Bear" owner="R7" />
+  return <CommunityBearPage />
 }

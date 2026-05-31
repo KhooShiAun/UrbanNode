@@ -30,3 +30,9 @@ export type { ModalProps } from './Modal'
 
 export { ToastProvider, useToast } from './Toast'
 export type { ToastType } from './Toast'
+
+export { StatCard } from './StatCard'
+export type { StatCardProps } from './StatCard'
+
+export { ProgressBar } from './ProgressBar'
+export type { ProgressBarProps } from './ProgressBar'
