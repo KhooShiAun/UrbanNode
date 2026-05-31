@@ -1,112 +1,68 @@
-<!-- # UrbanNode
+# UrbanNode — Smart City Maintenance Tracker
 
-City-maintenance reporting app. Residents submit issues, workers triage and resolve them.
-
-Stack: **React + Vite** on the client, **Express + PostgreSQL** on the server, **Drizzle ORM** for the schema, **express-session + connect-pg-simple** for auth.
+SWE3024 Code Camp | Group 2 | Sunway University
 
 ---
 
-## Getting started
+## Getting Started
 
-### 1. Install dependencies
+**Step 1 — Clone the repo**
+
+```bash
+git clone [repo URL]
+cd UrbanNode
+```
+
+**Step 2 — Install dependencies**
 
 ```bash
 pnpm install
 ```
 
-### 2. Set up Postgres on Neon (free, no install)
+**Step 3 — Set up your `.env` file**
 
-1. Sign up at [neon.tech](https://neon.tech)
-2. Create a project — name it `urbannode`
-3. From the Neon dashboard, copy the "Connection string"
-4. Create a `.env` file at the repo root (copy from `.env.example`)
-5. Paste the Neon connection string as `DATABASE_URL=...`
-6. Generate a session secret:
-   ```bash
-   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-   ```
-   Paste it as `SESSION_SECRET=...` in `.env`
+- Copy `.env.example` to `.env`
+- Ask the team lead for the `DATABASE_URL` value
+- Set `SESSION_SECRET` to any random string
+- Leave `GEMINI_API_KEY` blank for now
 
-### 3. Create the tables
-
-```bash
-pnpm db:push
-```
-
-This reads `server/schema.ts` and creates the matching tables in Neon. Re-run any time you change the schema.
-
-### 4. Seed demo data
-
-```bash
-pnpm db:seed
-```
-
-Creates two accounts and a few sample reports so the app isn't empty:
-- **Resident** — `jane@example.com` / `password123`
-- **Worker** — `ahmad.ali@city.gov.my` / `password123`
-
-### 5. Start the dev servers
+**Step 4 — Run the project**
 
 ```bash
 pnpm dev
 ```
 
-This runs the Vite client (`http://localhost:5173`) and the Express API (`http://localhost:3001`) together. The client proxies `/api/*` to the API.
+- Client runs at http://localhost:5173
+- Server runs at http://localhost:3001
+
+**Step 5 — Sign in with a demo account**
+
+| Role     | Email          | Password |
+| -------- | -------------- | -------- |
+| Resident | sarah@demo.com | demo1234 |
+| Resident | amir@demo.com  | demo1234 |
+| Worker   | ahmad@demo.com | demo1234 |
 
 ---
 
-## Viewing the database
+## ⚠️ Important Rules
 
-Easiest: open your project in Neon's web dashboard.
+> **DO NOT run `pnpm db:push` or `pnpm db:seed`.**
+> These commands wipe the shared database. Team lead only.
 
-- **Tables** tab — spreadsheet view of each table
-- **SQL Editor** tab — run any query
+> **DO NOT commit your `.env` file.**
+> It is already in `.gitignore`. Never paste `DATABASE_URL` into code.
 
-Useful queries:
-```sql
-SELECT id, email, full_name, role FROM users;
-SELECT ref, severity, status, created_at FROM reports ORDER BY created_at DESC;
-```
+> **DO NOT work directly on `main`.**
+> Always create a branch first. Follow the Git workflow guide.
 
 ---
 
-## Project layout
+## Where to Find Your Screen
 
-```
-server/
-  index.ts          Express app entry — session middleware, routers
-  db.ts             Postgres pool + Drizzle client
-  schema.ts         All table definitions (single source of truth)
-  middleware.ts     requireAuth / requireWorker / requireResident
-  seed.ts           Demo data script (pnpm db:seed)
-  routes/
-    auth.ts         POST /api/auth/{signup,signin,signout}
-    me.ts           GET/PATCH /api/me
-    reports.ts      GET/POST /api/reports, GET/PATCH /api/reports/:id
-    notifications.ts  GET /api/notifications, POST /api/notifications/mark-all-read
-    gamification.ts GET /api/gamification
+Your assigned screen is a placeholder stub. Find your file here:
 
-src/
-  components/       Layout shells, UI primitives, icons
-  pages/            Route components (resident + worker shells)
-  App.tsx           Routes
-```
+- City Resident screens → `src/pages/resident/`
+- City Worker screens → `src/pages/worker/`
 
----
-
-## Useful scripts
-
-| Command | What it does |
-|---|---|
-| `pnpm dev` | Run client + server together |
-| `pnpm build` | Type-check and build the client for production |
-| `pnpm lint` | ESLint on src + server |
-| `pnpm db:push` | Sync schema.ts to the database |
-| `pnpm db:seed` | Insert demo users + reports |
-
----
-
-## What's next
-
-- **F4** — wire the SignUp / SignIn forms to call the real backend endpoints
-- Real screen content (R3–R9 and W1–W8 owners replace the route stubs in `src/pages/resident/` and `src/pages/worker/`) -->
+Build your screen inside your assigned file.
