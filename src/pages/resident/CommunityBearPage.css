@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: var(--space-md);
   padding: var(--space-md);
-  max-width: 800px;
+  width: 100%;
 }
 
 .un-community-page__header {

@@ -1,9 +1,12 @@
 .un-stat-card {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: var(--space-xs);
   animation: un-stat-card-enter 0.5s ease both;
   animation-delay: var(--un-stagger, 0s);
+  padding: var(--space-lg);
 }
 
 @keyframes un-stat-card-enter {
@@ -21,13 +24,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius);
-  background: var(--color-surface-container-low);
   color: var(--color-primary);
-  font-size: var(--text-lg);
-  flex-shrink: 0;
+  margin-bottom: var(--space-xs);
 }
 
 .un-stat-card__value {

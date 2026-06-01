@@ -1,14 +1,7 @@
 import type { HTMLAttributes } from 'react'
 import './BearAvatar.css'
 
-/** Maps each level to a bear-themed emoji */
-const LEVEL_EMOJI: Record<string, string> = {
-  bronze: '🐻',
-  silver: '🐼',
-  gold: '🧸',
-  platinum: '🐨',
-  diamond: '🐻‍❄️',
-}
+import { LEVEL_EMOJI } from './constants'
 
 export type BearAvatarProps = HTMLAttributes<HTMLDivElement> & {
   /** Current community level, determines which emoji is displayed */

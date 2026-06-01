@@ -1,0 +1,114 @@
+.un-level-up-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(var(--color-surface-rgb), 0.85);
+  backdrop-filter: blur(12px);
+  padding: var(--space-xl);
+  
+  /* Entrance fade */
+  animation: un-level-fade-in 0.3s ease-out forwards;
+}
+
+.un-level-up-overlay__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+  max-width: 400px;
+  width: 100%;
+  padding: var(--space-2xl) var(--space-xl);
+  background: var(--color-surface);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--color-outline-variant);
+  position: relative;
+  overflow: hidden;
+
+  /* Elastic pop-in */
+  animation: un-level-pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Background celebratory glow */
+.un-level-up-overlay__content::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--color-primary-container) 0%, transparent 60%);
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  opacity: 0.5;
+  animation: un-spin-slow 10s linear infinite;
+}
+
+.un-level-up-overlay__icon-wrapper {
+  position: relative;
+  z-index: 1;
+  padding: 30px;
+  font-size: 80px;
+  line-height: 1;
+  margin-bottom: var(--space-sm);
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
+  animation: un-bounce-idle 2s ease-in-out infinite;
+}
+
+.un-level-up-overlay__title {
+  position: relative;
+  z-index: 1;
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.un-level-up-overlay__subtitle {
+  position: relative;
+  z-index: 1;
+  font-size: var(--text-lg);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.un-level-up-overlay__actions {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--space-lg);
+  padding: 30px;
+  width: 100%;
+}
+
+@keyframes un-level-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes un-level-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes un-spin-slow {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}

@@ -9,3 +9,6 @@ export type { GearGridProps, GearItem } from './GearGrid'
 
 export { CommunityBearProfile } from './CommunityBearProfile'
 export type { CommunityBearProfileProps } from './CommunityBearProfile'
+
+export { LevelUpOverlay } from './LevelUpOverlay'
+export type { LevelUpOverlayProps } from './LevelUpOverlay'

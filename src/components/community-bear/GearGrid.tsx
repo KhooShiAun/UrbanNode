@@ -7,6 +7,7 @@ export type GearItem = {
   name: string
   icon: ReactNode
   unlocked: boolean
+  unlockCondition?: string
 }
 
 export type GearGridProps = HTMLAttributes<HTMLDivElement> & {
@@ -24,6 +25,7 @@ export function GearGrid({ items, className, ...rest }: GearGridProps) {
           name={gear.name}
           icon={gear.icon}
           unlocked={gear.unlocked}
+          unlockCondition={gear.unlockCondition}
           index={i}
         />
       ))}
