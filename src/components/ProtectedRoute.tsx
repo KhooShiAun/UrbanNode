@@ -12,7 +12,7 @@ type ProtectedRouteProps = {
 export function ProtectedRoute({ requiredRole, children }: ProtectedRouteProps) {
 
 
-/*const [state, setState] = useState<AuthState>('loading')
+const [state, setState] = useState<AuthState>('loading')
 
   useEffect(() => {
     let active = true
@@ -42,11 +42,7 @@ export function ProtectedRoute({ requiredRole, children }: ProtectedRouteProps) 
     }
   }, [requiredRole])
   
-  Add this back after completing development, so it will not bypass sign up without email */
 
-  
-  // TEMPORARY: Bypass auth for UI development
-  const [state] = useState<AuthState>('authed')
 
   if (state === 'loading') {
     return <Spinner fullPage />
