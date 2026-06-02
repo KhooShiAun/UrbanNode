@@ -7,17 +7,11 @@ interface Notification {
   title: string;
   message: string;
   date: string;
-  category:
-    | "status"
-    | "sla"
-    | "ai"
-    | "reward"
-    | "location"
-    | "system";
+  category: "status" | "sla" | "ai" | "reward" | "location" | "system";
   read: boolean;
 }
 
-const Notifications: React.FC = () => {
+export const Notifications: React.FC = () => {
   const [notifications] = useState<Notification[]>([
     {
       id: 1,
@@ -58,8 +52,7 @@ const Notifications: React.FC = () => {
     {
       id: 5,
       title: "Community Bear Reward",
-      message:
-        "🎉 Congratulations! You unlocked the Safety Helmet gear.",
+      message: "🎉 Congratulations! You unlocked the Safety Helmet gear.",
       date: "22 May 2026, 4:15 PM",
       category: "reward",
       read: true,
@@ -103,19 +96,19 @@ const Notifications: React.FC = () => {
           <div
             key={notification.id}
             className={`notification-card ${getCategoryClass(
-              notification.category
+              notification.category,
             )} ${notification.read ? "" : "unread"}`}
           >
             <div className="notification-icon">
               {notification.category === "reward"
                 ? "🏆"
                 : notification.category === "sla"
-                ? "⏱️"
-                : notification.category === "ai"
-                ? "🧠"
-                : notification.category === "location"
-                ? "📍"
-                : "✔️"}
+                  ? "⏱️"
+                  : notification.category === "ai"
+                    ? "🧠"
+                    : notification.category === "location"
+                      ? "📍"
+                      : "✔️"}
             </div>
 
             <div className="notification-content">
@@ -132,9 +125,7 @@ const Notifications: React.FC = () => {
               <small>{notification.date}</small>
             </div>
 
-            <button className="view-btn">
-              View Report
-            </button>
+            <button className="view-btn">View Report</button>
           </div>
         ))}
       </div>
