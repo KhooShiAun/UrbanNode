@@ -1,125 +1,101 @@
 import { useState, useEffect } from 'react'
-import { Avatar, Button } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { CommunityBearProfile, LevelUpOverlay } from '@/components/community-bear'
-import type { GearItem } from '@/components/community-bear'
+import { useBearProfile } from '@/hooks/useBearProfile'
 import './CommunityBearPage.css'
-
-// ── Dev mock data ───────────────────────────────────────────────────
-
-const MOCK_PROFILE = {
-  name: 'Testing Name',
-  email: 'testing@gmail.com',
-  joined: 'March 2026',
-}
-
-const INITIAL_GEAR: GearItem[] = [
-  { id: 'hard-hat', name: 'Safety Helmet', icon: '🪖', unlocked: false, unlockCondition: 'Submit 1 report' },
-  { id: 'safety-vest', name: 'Utility Vest', icon: '🦺', unlocked: false, unlockCondition: 'Submit 5 reports' },
-  { id: 'safety-gloves', name: 'Safety Gloves', icon: '🧤', unlocked: false, unlockCondition: 'Submit 10 reports' },
-  { id: 'shield', name: 'Shield', icon: '🛡️', unlocked: false, unlockCondition: 'Submit 15 reports' },
-  { id: 'flashlight', name: 'Flashlight', icon: '🔦', unlocked: false, unlockCondition: 'Submit 20 reports' },
-  { id: 'megaphone', name: 'Megaphone', icon: '📣', unlocked: false, unlockCondition: 'Submit 25 reports' },
-  { id: 'clipboard', name: 'Clipboard', icon: '📋', unlocked: false, unlockCondition: 'Submit 30 reports' },
-  { id: 'gold-badge', name: 'Gold Badge', icon: '🎖️', unlocked: false, unlockCondition: 'Submit 50 reports' },
-  { id: 'tool-belt', name: 'Tool Belt', icon: '🧰', unlocked: false, unlockCondition: 'Submit 100 reports' },
-]
-
-// ── Level Logic ──────────────────────────────────────────────────────
-
-function calculateLevel(resolved: number) {
-  if (resolved >= 100) return { current: 'Diamond', next: 'Diamond', threshold: 100 }
-  if (resolved >= 50) return { current: 'Platinum', next: 'Diamond', threshold: 100 }
-  if (resolved >= 25) return { current: 'Gold', next: 'Platinum', threshold: 50 }
-  if (resolved >= 10) return { current: 'Silver', next: 'Gold', threshold: 25 }
-  return { current: 'Bronze', next: 'Silver', threshold: 10 }
-}
-
-function calculateGear(resolved: number): GearItem[] {
-  // Mock logic: unlock a gear item for every 5 resolved reports
-  const unlockedCount = Math.floor(resolved / 5)
-  return INITIAL_GEAR.map((gear, index) => ({
-    ...gear,
-    unlocked: index < unlockedCount,
-  }))
-}
 
 // ── Page component ───────────────────────────────────────────────────
 
 export function CommunityBearPage() {
-  const [submitted, setSubmitted] = useState(0)
-  const [resolved, setResolved] = useState(0)
-  
-  // State for overlay
-  const [prevResolved, setPrevResolved] = useState(0)
+  const { data, loading, error, refetch } = useBearProfile()
+
+  // State for level-up overlay
+  const [prevLevel, setPrevLevel] = useState<string | null>(null)
   const [showLevelUp, setShowLevelUp] = useState(false)
 
-  // Derived state
-  const { current: currentLevel, next: nextLevelName, threshold: nextLevelThreshold } = calculateLevel(resolved)
-  const gear = calculateGear(resolved)
-
-  // Detect level ups
+  // Detect level-ups when data changes (e.g. after refetch)
   useEffect(() => {
-    if (resolved > prevResolved) {
-      const oldLevel = calculateLevel(prevResolved).current
-      const newLevel = calculateLevel(resolved).current
-      if (newLevel !== oldLevel) {
-        setShowLevelUp(true)
-      }
+    if (!data) return
+
+    if (prevLevel && prevLevel !== data.currentLevel) {
+      setShowLevelUp(true)
     }
-    setPrevResolved(resolved)
-  }, [resolved, prevResolved])
+    setPrevLevel(data.currentLevel)
+  }, [data, prevLevel])
+
+  // ── Loading state ──────────────────────────────────────────────────
+
+  if (loading && !data) {
+    return (
+      <div className="un-community-page">
+        <div className="un-community-page__header" style={{ marginBottom: '24px' }}>
+          <h1 className="un-community-page__title">Community Bear</h1>
+        </div>
+        <div className="un-community-page__loading" style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '16px',
+          padding: '64px 0',
+          color: 'var(--color-on-surface-variant)',
+        }}>
+          <div className="un-community-page__spinner" style={{
+            width: '40px',
+            height: '40px',
+            border: '3px solid var(--color-surface-container)',
+            borderTopColor: 'var(--color-primary)',
+            borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite',
+          }} />
+          <p style={{ fontSize: '14px' }}>Loading your bear profile…</p>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Error state ────────────────────────────────────────────────────
+
+  if (error) {
+    return (
+      <div className="un-community-page">
+        <div className="un-community-page__header" style={{ marginBottom: '24px' }}>
+          <h1 className="un-community-page__title">Community Bear</h1>
+        </div>
+        <div style={{
+          background: 'var(--color-error-container, #fce4ec)',
+          color: 'var(--color-on-error-container, #b71c1c)',
+          padding: '16px 20px',
+          borderRadius: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+        }}>
+          <span style={{ fontSize: '20px' }}>⚠️</span>
+          <div>
+            <strong>Couldn't load your profile</strong>
+            <p style={{ margin: '4px 0 0', fontSize: '14px' }}>{error}</p>
+          </div>
+          <Button variant="outline" size="sm" onClick={refetch} style={{ marginLeft: 'auto' }}>
+            Retry
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!data) return null
+
+  // ── Render ─────────────────────────────────────────────────────────
 
   return (
     <div className="un-community-page">
       {showLevelUp && (
-        <LevelUpOverlay 
-          level={currentLevel} 
-          onClose={() => setShowLevelUp(false)} 
+        <LevelUpOverlay
+          level={data.currentLevel}
+          onClose={() => setShowLevelUp(false)}
         />
       )}
-
-      {/* Dev Controls - Temporary for testing */}
-      <div
-        style={{
-          background: 'var(--color-surface-container-low)',
-          padding: '16px',
-          borderRadius: '8px',
-          display: 'flex',
-          gap: '8px',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          marginBottom: '16px',
-          border: '1px dashed var(--color-outline)',
-        }}
-      >
-        <span style={{ fontSize: '14px', fontWeight: 'bold' }}>Dev Controls:</span>
-        <Button variant="outline" size="sm" onClick={() => setSubmitted((s) => s + 1)}>
-          +1 Submitted
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            setSubmitted((s) => Math.max(s, resolved + 1))
-            setResolved((r) => r + 1)
-          }}
-        >
-          +1 Resolved
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            setSubmitted((s) => Math.max(s, resolved + 5))
-            setResolved((r) => r + 5)
-          }}
-        >
-          +5 Resolved
-        </Button>
-        <Button variant="ghost" size="sm" onClick={() => { setSubmitted(0); setResolved(0) }}>
-          Reset
-        </Button>
-      </div>
 
       {/* Page header */}
       <div className="un-community-page__header" style={{ marginBottom: '24px' }}>
@@ -128,12 +104,12 @@ export function CommunityBearPage() {
 
       {/* Community Bear profile with stats, progress, avatar & gear */}
       <CommunityBearProfile
-        submitted={submitted}
-        resolved={resolved}
-        currentLevel={currentLevel}
-        nextLevelThreshold={nextLevelThreshold}
-        nextLevelName={nextLevelName}
-        gear={gear}
+        submitted={data.submitted}
+        resolved={data.resolved}
+        currentLevel={data.currentLevel}
+        nextLevelThreshold={data.nextLevelThreshold}
+        nextLevelName={data.nextLevelName}
+        gear={data.gear}
       />
     </div>
   )
