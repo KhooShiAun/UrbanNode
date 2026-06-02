@@ -1,177 +1,145 @@
-import './Notifications.css'
-
-type NotificationType = 'resolved' | 'in-progress' | 'assigned' | 'submitted' | 'sla'
+import React, { useState } from "react";
+import "./Notifications.css";
 
 interface Notification {
-  id: string
-  type: NotificationType
-  message: string
-  timestamp: string
+  id: number;
+  reportId?: string;
+  title: string;
+  message: string;
+  date: string;
+  category:
+    | "status"
+    | "sla"
+    | "ai"
+    | "reward"
+    | "location"
+    | "system";
+  read: boolean;
 }
 
-interface NotificationGroup {
-  label: string
-  items: Notification[]
-}
+const Notifications: React.FC = () => {
+  const [notifications] = useState<Notification[]>([
+    {
+      id: 1,
+      reportId: "UR-031",
+      title: "Report Resolved",
+      message: "Your report UR-031 has been marked as Resolved.",
+      date: "25 May 2026, 10:30 AM",
+      category: "status",
+      read: false,
+    },
+    {
+      id: 2,
+      reportId: "UR-042",
+      title: "Report In Progress",
+      message: "Ahmad bin Ali is currently working on your report.",
+      date: "25 May 2026, 8:15 AM",
+      category: "status",
+      read: false,
+    },
+    {
+      id: 3,
+      reportId: "UR-042",
+      title: "AI Severity Assigned",
+      message: "Your report has been classified as ROUTINE severity.",
+      date: "24 May 2026, 6:00 PM",
+      category: "ai",
+      read: true,
+    },
+    {
+      id: 4,
+      reportId: "UR-029",
+      title: "SLA Warning",
+      message: "24 hours remaining before SLA deadline.",
+      date: "23 May 2026, 9:00 AM",
+      category: "sla",
+      read: true,
+    },
+    {
+      id: 5,
+      title: "Community Bear Reward",
+      message:
+        "🎉 Congratulations! You unlocked the Safety Helmet gear.",
+      date: "22 May 2026, 4:15 PM",
+      category: "reward",
+      read: true,
+    },
+    {
+      id: 6,
+      reportId: "UR-050",
+      title: "Location Confirmed",
+      message: "Report submitted successfully at pinned location.",
+      date: "21 May 2026, 1:45 PM",
+      category: "location",
+      read: true,
+    },
+  ]);
 
-const NOTIFICATION_GROUPS: NotificationGroup[] = [
-  {
-    label: 'Today',
-    items: [
-      {
-        id: '1',
-        type: 'resolved',
-        message: 'Your report UR-031 has been marked as Resolved',
-        timestamp: '5/25/2026, 10:30:00 AM',
-      },
-      {
-        id: '2',
-        type: 'in-progress',
-        message: 'Report UR-042 is now In Progress – Ahmad bin Ali is working on it',
-        timestamp: '5/25/2026, 8:15:00 AM',
-      },
-    ],
-  },
-  {
-    label: 'Yesterday',
-    items: [
-      {
-        id: '3',
-        type: 'assigned',
-        message: 'Your report UR-042 has been assigned to a city worker',
-        timestamp: '5/24/2026, 4:45:00 PM',
-      },
-      {
-        id: '4',
-        type: 'submitted',
-        message: 'Report UR-038 has been submitted successfully',
-        timestamp: '5/24/2026, 2:20:00 PM',
-      },
-    ],
-  },
-  {
-    label: 'Earlier',
-    items: [
-      {
-        id: '5',
-        type: 'sla',
-        message: 'SLA deadline approaching for report UR-029 – 24 hours remaining',
-        timestamp: '5/23/2026, 9:00:00 AM',
-      },
-    ],
-  },
-]
-
-const CheckCircleIcon = ({ color }: { color: string }) => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-    <polyline points="22 4 12 14.01 9 11.01" />
-  </svg>
-)
-
-const ClockIcon = ({ color }: { color: string }) => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12 6 12 12 16 14" />
-  </svg>
-)
-
-const InfoIcon = ({ color }: { color: string }) => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <line x1="12" y1="8" x2="12" y2="12" />
-    <line x1="12" y1="16" x2="12.01" y2="16" />
-  </svg>
-)
-
-interface IconConfig {
-  icon: React.ReactNode
-  accentColor: string | null
-  bgColor: string
-  iconBg: string
-}
-
-function getIconConfig(type: NotificationType): IconConfig {
-  switch (type) {
-    case 'resolved':
-      return {
-        icon: <CheckCircleIcon color="#3db88b" />,
-        accentColor: '#3db88b',
-        bgColor: '#f0faf6',
-        iconBg: '#ffffff',
-      }
-    case 'in-progress':
-      return {
-        icon: <ClockIcon color="#f97316" />,
-        accentColor: '#f97316',
-        bgColor: '#fff7f0',
-        iconBg: '#ffffff',
-      }
-    case 'assigned':
-      return {
-        icon: <CheckCircleIcon color="#9ca3af" />,
-        accentColor: null,
-        bgColor: '#f9fafb',
-        iconBg: '#e5e7eb',
-      }
-    case 'submitted':
-      return {
-        icon: <CheckCircleIcon color="#3db88b" />,
-        accentColor: null,
-        bgColor: '#f9fafb',
-        iconBg: '#e5e7eb',
-      }
-    case 'sla':
-      return {
-        icon: <InfoIcon color="#9ca3af" />,
-        accentColor: null,
-        bgColor: '#f9fafb',
-        iconBg: '#e5e7eb',
-      }
-  }
-}
-
-function NotificationItem({ notification }: { notification: Notification }) {
-  const config = getIconConfig(notification.type)
+  const getCategoryClass = (category: string) => {
+    switch (category) {
+      case "status":
+        return "status";
+      case "sla":
+        return "sla";
+      case "ai":
+        return "ai";
+      case "reward":
+        return "reward";
+      case "location":
+        return "location";
+      default:
+        return "system";
+    }
+  };
 
   return (
-    <div
-      className="notif-item"
-      style={{ backgroundColor: config.bgColor }}
-    >
-      {config.accentColor && (
-        <div className="notif-item__accent" style={{ backgroundColor: config.accentColor }} />
-      )}
-      <div className="notif-item__icon" style={{ backgroundColor: config.iconBg }}>
-        {config.icon}
-      </div>
-      <div className="notif-item__body">
-        <p className="notif-item__message">{notification.message}</p>
-        <span className="notif-item__time">{notification.timestamp}</span>
-      </div>
-    </div>
-  )
-}
-
-export function Notifications() {
-  return (
-    <div className="notifications">
-      <div className="notifications__header">
-        <h1 className="notifications__title">Notifications</h1>
+    <div className="notifications-page">
+      <div className="notifications-header">
+        <h1>Notifications</h1>
       </div>
 
-      <div className="notifications__content">
-        {NOTIFICATION_GROUPS.map((group) => (
-          <section key={group.label} className="notif-group">
-            <h2 className="notif-group__label">{group.label}</h2>
-            <div className="notif-group__items">
-              {group.items.map((item) => (
-                <NotificationItem key={item.id} notification={item} />
-              ))}
+      <div className="notifications-container">
+        {notifications.map((notification) => (
+          <div
+            key={notification.id}
+            className={`notification-card ${getCategoryClass(
+              notification.category
+            )} ${notification.read ? "" : "unread"}`}
+          >
+            <div className="notification-icon">
+              {notification.category === "reward"
+                ? "🏆"
+                : notification.category === "sla"
+                ? "⏱️"
+                : notification.category === "ai"
+                ? "🧠"
+                : notification.category === "location"
+                ? "📍"
+                : "✔️"}
             </div>
-          </section>
+
+            <div className="notification-content">
+              <h3>{notification.title}</h3>
+
+              <p>{notification.message}</p>
+
+              {notification.reportId && (
+                <span className="report-tag">
+                  Report: {notification.reportId}
+                </span>
+              )}
+
+              <small>{notification.date}</small>
+            </div>
+
+            <button className="view-btn">
+              View Report
+            </button>
+          </div>
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default Notifications;
