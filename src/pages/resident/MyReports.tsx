@@ -1,18 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Badge,
-  Button,
-  Card,
-  EmptyState,
-  Input,
-  Spinner,
-  Tag,
-  useToast,
-  type BadgeVariant,
-} from '@/components/ui'
+import { Badge, Button, Card, EmptyState, Input, Spinner, Tag, useToast } from '@/components/ui'
 import { Calendar, ChevronDown, Clipboard, MapPin, Search } from '@/components/icons'
 import { buildReportDetail, type Report } from './reportDetail.mock'
+import { ReportTimeline } from './ReportTimeline'
+import {
+  formatCode,
+  formatDate,
+  formatDateTime,
+  severityBadge,
+  statusBadge,
+} from './reportFormat'
 import './MyReports.css'
 
 type StatusFilter = 'all' | 'new' | 'in_progress' | 'resolved'
@@ -23,46 +21,6 @@ const FILTERS: { value: StatusFilter; label: string }[] = [
   { value: 'in_progress', label: 'In Progress' },
   { value: 'resolved', label: 'Resolved' },
 ]
-
-function formatCode(id: number): string {
-  return `UR-${String(id).padStart(3, '0')}`
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString()
-}
-
-function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString()
-}
-
-function statusBadge(status: string): { variant: BadgeVariant; label: string } {
-  switch (status) {
-    case 'in_progress':
-      return { variant: 'in-progress', label: 'In Progress' }
-    case 'resolved':
-      return { variant: 'resolved', label: 'Resolved' }
-    case 'uncategorised':
-      return { variant: 'uncategorised', label: 'Uncategorised' }
-    case 'new':
-    default:
-      return { variant: 'new', label: 'New' }
-  }
-}
-
-function severityBadge(severity: string): { variant: BadgeVariant; label: string } {
-  switch (severity) {
-    case 'urgent':
-      return { variant: 'urgent', label: 'Urgent' }
-    case 'routine':
-      return { variant: 'routine', label: 'Routine' }
-    case 'low':
-      return { variant: 'low', label: 'Low' }
-    case 'uncategorised':
-    default:
-      return { variant: 'uncategorised', label: 'Uncategorised' }
-  }
-}
 
 export function MyReports() {
   const navigate = useNavigate()
@@ -261,19 +219,7 @@ function ReportCardDetail({ report, onView }: { report: Report; onView: () => vo
 
       <div className="report-detail__field">
         <h3 className="report-detail__label">Status Timeline</h3>
-        <ol className="timeline">
-          {detail.timeline.map((event, index) => (
-            <li key={index} className="timeline__item">
-              <span className="timeline__dot" aria-hidden="true" />
-              <div className="timeline__content">
-                <span className="timeline__event">{event.label}</span>
-                <span className="timeline__meta">
-                  {formatDateTime(event.at)} • {event.actor}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ol>
+        <ReportTimeline events={detail.timeline} />
       </div>
 
       <Button fullWidth onClick={onView}>
