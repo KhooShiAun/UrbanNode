@@ -207,3 +207,20 @@ export function ArrowRight(props: IconProps) {
     </Icon>
   )
 }
+
+export function Calendar(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M3 9h18M8 2v4M16 2v4" />
+    </Icon>
+  )
+}
+
+export function ChevronDown(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="m6 9 6 6 6-6" />
+    </Icon>
+  )
+}
