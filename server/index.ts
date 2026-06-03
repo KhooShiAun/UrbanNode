@@ -14,7 +14,9 @@ if (!process.env.SESSION_SECRET) {
 }
 
 const app = express()
-app.use(express.json())
+// Reports may carry a base64-encoded photo in the JSON body, which exceeds
+// Express's default 100kb limit.
+app.use(express.json({ limit: '8mb' }))
 
 const PgSession = connectPgSimple(session)
 app.use(
