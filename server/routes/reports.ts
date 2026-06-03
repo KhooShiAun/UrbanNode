@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { db } from '../db.ts'
 import { reports } from '../schema.ts'
 import { requireResident } from '../middleware.ts'
@@ -57,6 +57,29 @@ router.get('/', requireResident, async (req, res, next) => {
       .orderBy(desc(reports.created_at))
 
     res.status(200).json(rows)
+  } catch (err) {
+    next(err)
+  }
+})
+
+// GET /api/reports/:id — a single report the caller owns.
+router.get('/:id', requireResident, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id)
+    if (!Number.isInteger(id)) {
+      return res.status(400).json({ error: 'Invalid report id' })
+    }
+
+    const [report] = await db
+      .select()
+      .from(reports)
+      .where(and(eq(reports.id, id), eq(reports.user_id, req.session.userId!)))
+
+    if (!report) {
+      return res.status(404).json({ error: 'Report not found' })
+    }
+
+    res.status(200).json(report)
   } catch (err) {
     next(err)
   }
