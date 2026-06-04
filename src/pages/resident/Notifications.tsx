@@ -124,8 +124,6 @@ export const Notifications: React.FC = () => {
 
               <small>{notification.date}</small>
             </div>
-
-            <button className="view-btn">View Report</button>
           </div>
         ))}
       </div>
