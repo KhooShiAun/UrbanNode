@@ -17,6 +17,7 @@ type UseBearProfileResult = {
   loading: boolean
   error: string | null
   refetch: () => void
+  mutate: (data: BearProfileData) => void
 }
 
 // ── Raw API response shape ──────────────────────────────────────────
@@ -86,5 +87,5 @@ export function useBearProfile(): UseBearProfileResult {
     fetchProfile()
   }, [fetchProfile])
 
-  return { data, loading, error, refetch: fetchProfile }
+  return { data, loading, error, refetch: fetchProfile, mutate: setData }
 }

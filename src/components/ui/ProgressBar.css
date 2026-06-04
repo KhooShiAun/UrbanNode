@@ -36,6 +36,7 @@
   bottom: 0;
   border-radius: var(--radius-full);
   background: var(--color-primary);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: un-progress-grow 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
   overflow: hidden;
 }
@@ -69,6 +70,7 @@
   bottom: 100%;
   left: var(--un-progress-pct, 0%);
   transform: translateX(-50%);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 1.5rem;
   line-height: 1;
   margin-bottom: 2px;

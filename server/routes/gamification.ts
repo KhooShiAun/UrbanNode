@@ -130,6 +130,76 @@ router.get('/profile', requireResident, async (req, res, next) => {
   }
 })
 
+// ── POST /api/gamification/dev-update ───────────────────────────────
+// Developer endpoint to artificially bump stats for testing UI.
+
+router.post('/dev-update', requireResident, async (req, res, next) => {
+  try {
+    const userId = req.session.userId!
+    const { action } = req.body
+
+    const [progress] = await db
+      .select()
+      .from(bear_progress)
+      .where(eq(bear_progress.user_id, userId))
+
+    let submitted = progress?.total_submitted ?? 0
+    let resolved = progress?.total_resolved ?? 0
+
+    if (action === 'add_submitted') {
+      submitted += 10
+    } else if (action === 'add_resolved') {
+      // Typically resolving implies submitting
+      submitted += 10
+      resolved += 10
+    } else if (action === 'reset') {
+      submitted = 0
+      resolved = 0
+    }
+
+    const levelInfo = calculateLevel(resolved)
+    const levelNumber =
+      levelInfo.current === 'Diamond' ? 5 :
+      levelInfo.current === 'Platinum' ? 4 :
+      levelInfo.current === 'Gold' ? 3 :
+      levelInfo.current === 'Silver' ? 2 : 1
+
+    const allGear = await db.select().from(gear_items)
+    const newlyUnlocked: string[] = []
+
+    for (const g of allGear) {
+      const threshold = UNLOCK_THRESHOLDS[g.unlock_condition]
+      if (threshold === undefined) continue
+      if (threshold > 0 && submitted >= threshold) newlyUnlocked.push(g.name)
+      if (threshold < 0 && resolved >= Math.abs(threshold)) newlyUnlocked.push(g.name)
+    }
+
+    if (progress) {
+      await db
+        .update(bear_progress)
+        .set({
+          level: levelNumber,
+          total_submitted: submitted,
+          total_resolved: resolved,
+          gear_unlocked: newlyUnlocked,
+        })
+        .where(eq(bear_progress.user_id, userId))
+    } else {
+      await db.insert(bear_progress).values({
+        user_id: userId,
+        level: levelNumber,
+        total_submitted: submitted,
+        total_resolved: resolved,
+        gear_unlocked: newlyUnlocked,
+      })
+    }
+
+    res.json({ success: true, submitted, resolved })
+  } catch (err) {
+    next(err)
+  }
+})
+
 // ── Helper: map gear name → emoji (matches the frontend constants) ──
 
 function gearNameToEmoji(name: string): string {
