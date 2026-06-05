@@ -1,0 +1,169 @@
+.home-page {
+  padding: 32px 56px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.profile-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #bfc9c1;
+  border-radius: 50%;
+  background: white;
+  color: #145c3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.greeting-card {
+  border: 1px solid #bfc9c1;
+  border-radius: 12px;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 40px;
+  background: #ffffff;
+}
+
+.greeting-icon {
+  color: #1a1c1b;
+  display: flex;
+}
+
+.greeting-text h1 {
+  margin: 0;
+  color: #145c3d;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.greeting-text p {
+  margin-top: 8px;
+  color: #404943;
+  font-size: 16px;
+}
+
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 44px;
+}
+
+.stat-card {
+  border: 1px solid #bfc9c1;
+  border-radius: 8px;
+  padding: 24px 28px;
+  min-height: 150px;
+  background: #ffffff;
+}
+
+.stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-icon {
+  color: #145c3d;
+  display: flex;
+}
+
+.stat-card h2 {
+  font-size: 44px;
+  color: #145c3d;
+  margin-top: 36px;
+  margin-bottom: 0;
+}
+
+.recent-section {
+  margin-top: 8px;
+}
+
+.recent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.view-all {
+  color: #145c3d;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.report-list {
+  border: 1px solid #bfc9c1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+}
+
+.report-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.report-item:last-child {
+  border-bottom: none;
+}
+
+.report-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.report-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.report-left h3 {
+  margin: 0;
+}
+
+.report-left p {
+  margin-top: 4px;
+  color: #666;
+}
+
+.report-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.status-progress {
+  background: #fff1cc;
+  color: #7a5200;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.status-resolved {
+  background: #dff7e8;
+  color: #146b43;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+}
