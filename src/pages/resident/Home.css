@@ -23,15 +23,20 @@
   cursor: pointer;
 }
 
-.greeting-card {
+.greeting-card,
+.stat-card,
+.report-list {
+  background: white;
   border: 1px solid #bfc9c1;
+}
+
+.greeting-card {
   border-radius: 12px;
   padding: 28px 32px;
   display: flex;
   align-items: center;
   gap: 32px;
   margin-bottom: 40px;
-  background: #ffffff;
 }
 
 .greeting-icon {
@@ -60,22 +65,44 @@
 }
 
 .stat-card {
-  border: 1px solid #bfc9c1;
   border-radius: 8px;
   padding: 24px 28px;
   min-height: 150px;
-  background: #ffffff;
 }
 
-.stat-top {
+.stat-top,
+.recent-header,
+.report-item,
+.report-left,
+.report-right,
+.stat-icon,
+.report-icon {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
+.stat-top,
+.recent-header,
+.report-item {
+  justify-content: space-between;
+}
+
 .stat-icon {
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.stat-icon.submitted,
+.stat-icon.resolved {
+  background: #a0f4c8;
   color: #145c3d;
-  display: flex;
+}
+
+.stat-icon.progress {
+  background: #fce7b2;
+  color: #7a5200;
 }
 
 .stat-card h2 {
@@ -90,9 +117,6 @@
 }
 
 .recent-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 16px;
 }
 
@@ -103,16 +127,11 @@
 }
 
 .report-list {
-  border: 1px solid #bfc9c1;
   border-radius: 12px;
   overflow: hidden;
-  background: white;
 }
 
 .report-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 24px;
   border-bottom: 1px solid #e5e5e5;
 }
@@ -122,19 +141,15 @@
 }
 
 .report-left {
-  display: flex;
-  align-items: center;
   gap: 20px;
 }
 
 .report-icon {
+  justify-content: center;
   width: 48px;
   height: 48px;
   border-radius: 8px;
   background: #f1f1f1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .report-left h3 {
@@ -147,23 +162,22 @@
 }
 
 .report-right {
-  display: flex;
-  align-items: center;
   gap: 16px;
+}
+
+.status-progress,
+.status-resolved {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 600;
 }
 
 .status-progress {
   background: #fff1cc;
   color: #7a5200;
-  padding: 8px 14px;
-  border-radius: 20px;
-  font-weight: 600;
 }
 
 .status-resolved {
   background: #dff7e8;
   color: #146b43;
-  padding: 8px 14px;
-  border-radius: 20px;
-  font-weight: 600;
 }

@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
 import {
   User,
   ClipboardList,
-  Clock3,
+  ClipboardClock,
   CheckCircle,
   AlertTriangle,
   Lightbulb,
-  Paintbrush,
+  PaintbrushVertical,
   ChevronRight,
 } from "lucide-react";
 import "./Home.css";
@@ -17,25 +18,38 @@ export function Home() {
   if (hour < 12) greeting = "Good morning";
   else if (hour < 18) greeting = "Good afternoon";
 
+  const [userName, setUserName] = useState("User");
+
+useEffect(() => {
+fetch("/api/auth/me", {
+  credentials: "include",
+})
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.full_name) {
+        setUserName(data.full_name);
+      }
+    })
+    .catch(() => {
+      setUserName("User");
+    });
+}, []);
+
   const stats = [
     { title: "Total Reports Submitted", value: 42, icon: ClipboardList },
-    { title: "Reports In Progress", value: 3, icon: Clock3 },
+    { title: "Reports In Progress", value: 3, icon: ClipboardClock },
     { title: "Reports Resolved", value: 39, icon: CheckCircle },
   ];
 
   const reports = [
     { title: "Pothole on 5th Avenue", date: "Reported Oct 12, 2023", status: "In Progress", icon: AlertTriangle },
     { title: "Broken Streetlight", date: "Reported Oct 10, 2023", status: "Resolved", icon: Lightbulb },
-    { title: "Graffiti on Wall", date: "Reported Oct 05, 2023", status: "Resolved", icon: Paintbrush },
+    { title: "Graffiti on Wall", date: "Reported Oct 05, 2023", status: "Resolved", icon: PaintbrushVertical },
   ];
 
   return (
     <div className="home-page">
-      <div className="profile-container">
-        <a href="/profile" className="profile-btn">
-          <User size={22} />
-        </a>
-      </div>
+
 
       <section className="greeting-card">
         <div className="greeting-icon">
@@ -43,7 +57,7 @@ export function Home() {
         </div>
 
         <div className="greeting-text">
-          <h1>{greeting}, User.</h1>
+          <h1>{greeting}, {userName}.</h1>
           <p>Help keep your city safe and beautiful today.</p>
         </div>
       </section>
@@ -56,9 +70,10 @@ export function Home() {
             <div className="stat-card" key={item.title}>
               <div className="stat-top">
                 <p>{item.title}</p>
-                <div className="stat-icon">
-                  <Icon size={24} />
-                </div>
+<div className={`stat-icon ${item.title === "Total Reports Submitted" ? "submitted" :
+  item.title === "Reports In Progress" ? "progress" : "resolved"}`}>
+  <Icon size={20} />
+</div>
               </div>
               <h2>{item.value}</h2>
             </div>
