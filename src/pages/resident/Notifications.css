@@ -1,43 +1,63 @@
-.notifications-page {
-  padding: 30px;
-  width: 100%;
-  min-height: 100vh;
-  background: #f7f9f8;
-}
+.notifications-page { 
+  padding: 30px; 
+  width: 100%; 
+  min-height: 100vh; 
+  background: #f7f9f8; 
+} 
 
-.notifications-header {
-  margin-bottom: 25px;
-}
+.notifications-header { 
+  margin-bottom: 25px; 
+} 
 
-.notifications-header h1 {
-  font-size: 32px;
-  color: #22352c;
-  font-weight: 700;
-}
+.notifications-header h1 { 
+  font-size: 32px; 
+  color: #22352c; 
+  font-weight: 700; 
+} 
 
-.notifications-container {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+.notifications-container { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 18px; 
 }
 
 /* CARD */
-
 .notification-card {
   display: flex;
-  align-items: center;
-  background: white;
-  border-radius: 18px;
-  padding: 20px;
-  border-left: 6px solid #d7d7d7;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-  transition: 0.2s ease;
+  align-items: center; /* same as old */
+  gap: 18px; /* closer to old spacing feel */
+  padding: 20px; /* restored from old (was 16px) */
+  border-radius: 18px; /* smoother like old */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 18px; /* same spacing as old container gap feel */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04); /* restored old depth */
 }
 
+/* hover effect (kept but refined) */
 .notification-card:hover {
   transform: translateY(-2px);
 }
 
+/* DONE = GREEN */
+.notification-card.done {
+  background: #ecfdf5;
+  border-left: 6px solid #22c55e; /* match old thickness feel */
+}
+
+/* IN PROGRESS = YELLOW */
+.notification-card.in-progress {
+  background: #fffbeb;
+  border-left: 6px solid #f59e0b;
+}
+
+/* READ = GREY */
+.notification-card.read {
+  background: #f3f4f6;
+  border-left: 6px solid #9ca3af;
+}
+
+/* ICON (restored old sizing style) */
 .notification-icon {
   width: 55px;
   height: 55px;
@@ -47,101 +67,5 @@
   justify-content: center;
   align-items: center;
   font-size: 24px;
-  margin-right: 20px;
-}
-
-.notification-content {
-  flex: 1;
-}
-
-.notification-content h3 {
-  margin: 0;
-  font-size: 18px;
-  color: #25362f;
-}
-
-.notification-content p {
-  margin: 8px 0;
-  color: #57635d;
-}
-
-.notification-content small {
-  color: #88928d;
-}
-
-.report-tag {
-  display: inline-block;
-  margin-bottom: 8px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: #eef4f1;
-  font-size: 13px;
-  font-weight: 600;
-  color: #2f6a4f;
-}
-
-/* BUTTON */
-
-.view-btn {
-  border: none;
-  background: #2d7c56;
-  color: white;
-  padding: 10px 18px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.view-btn:hover {
-  background: #236445;
-}
-
-/* UNREAD */
-
-.unread {
-  background: #fafcfb;
-}
-
-/* CATEGORY COLORS */
-
-.status {
-  border-left-color: #55c287;
-}
-
-.sla {
-  border-left-color: #f0a03d;
-}
-
-.ai {
-  border-left-color: #5d8dee;
-}
-
-.reward {
-  border-left-color: #c47bf5;
-}
-
-.location {
-  border-left-color: #00b3b3;
-}
-
-.system {
-  border-left-color: #999;
-}
-
-/* MOBILE */
-
-@media (max-width: 768px) {
-  .notification-card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .notification-icon {
-    margin-bottom: 15px;
-  }
-
-  .view-btn {
-    margin-top: 15px;
-    width: 100%;
-  }
+  min-width: 55px; /* keeps alignment stable */
 }

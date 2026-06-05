@@ -1,89 +1,125 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Notifications.css";
 
 interface Notification {
   id: number;
-  reportId?: string;
   title: string;
   message: string;
-  date: string;
-  category: "status" | "sla" | "ai" | "reward" | "location" | "system";
-  read: boolean;
+  status: "done" | "in_progress";
+  is_read: boolean;
+  created_at: string;
 }
 
 export const Notifications: React.FC = () => {
-  const [notifications] = useState<Notification[]>([
-    {
-      id: 1,
-      reportId: "UR-031",
-      title: "Report Resolved",
-      message: "Your report UR-031 has been marked as Resolved.",
-      date: "25 May 2026, 10:30 AM",
-      category: "status",
-      read: false,
-    },
-    {
-      id: 2,
-      reportId: "UR-042",
-      title: "Report In Progress",
-      message: "Ahmad bin Ali is currently working on your report.",
-      date: "25 May 2026, 8:15 AM",
-      category: "status",
-      read: false,
-    },
-    {
-      id: 3,
-      reportId: "UR-042",
-      title: "AI Severity Assigned",
-      message: "Your report has been classified as ROUTINE severity.",
-      date: "24 May 2026, 6:00 PM",
-      category: "ai",
-      read: true,
-    },
-    {
-      id: 4,
-      reportId: "UR-029",
-      title: "SLA Warning",
-      message: "24 hours remaining before SLA deadline.",
-      date: "23 May 2026, 9:00 AM",
-      category: "sla",
-      read: true,
-    },
-    {
-      id: 5,
-      title: "Community Bear Reward",
-      message: "🎉 Congratulations! You unlocked the Safety Helmet gear.",
-      date: "22 May 2026, 4:15 PM",
-      category: "reward",
-      read: true,
-    },
-    {
-      id: 6,
-      reportId: "UR-050",
-      title: "Location Confirmed",
-      message: "Report submitted successfully at pinned location.",
-      date: "21 May 2026, 1:45 PM",
-      category: "location",
-      read: true,
-    },
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const getCategoryClass = (category: string) => {
-    switch (category) {
-      case "status":
-        return "status";
-      case "sla":
-        return "sla";
-      case "ai":
-        return "ai";
-      case "reward":
-        return "reward";
-      case "location":
-        return "location";
-      default:
-        return "system";
-    }
-  };
+  useEffect(() => {
+    // Replace this section with database query later
+    const mockData: Notification[] = [
+      {
+        id: 1,
+        title: "Report Resolved",
+        message: "Your report UR-031 has been marked as Resolved.",
+        status: "done",
+        is_read: false,
+        created_at: "2026-05-25T10:30:00",
+      },
+      {
+        id: 2,
+        title: "Report In Progress",
+        message: "Ahmad bin Ali is currently working on your report.",
+        status: "in_progress",
+        is_read: false,
+        created_at: "2026-05-25T08:15:00",
+      },
+      {
+        id: 3,
+        title: "AI Severity Assigned",
+        message: "Your report has been classified as ROUTINE severity.",
+        status: "done",
+        is_read: true,
+        created_at: "2026-05-24T18:00:00",
+      },
+      {
+        id: 4,
+        title: "SLA Warning",
+        message: "24 hours remaining before SLA deadline.",
+        status: "done",
+        is_read: true,
+        created_at: "2026-05-23T09:00:00",
+      },
+      {
+        id: 5,
+        title: "Community Bear Reward",
+        message: "🎉 Congratulations! You unlocked the Safety Helmet gear.",
+        status: "in_progress",
+        is_read: true,
+        created_at: "2026-05-22T16:15:00",
+      },
+      {
+        id: 6,
+        title: "Location Confirmed",
+        message: "Report submitted successfully at pinned location.",
+        status: "done",
+        is_read: true,
+        created_at: "2026-05-21T13:45:00",
+      },
+    ];
+
+    setNotifications(mockData);
+  }, []);
+
+  const getNotificationStyle = (
+  status: string,
+  isRead: boolean,
+) => {
+  if (isRead) {
+    return {
+      cardClass: "read",
+      icon: "🔔",
+    };
+  }
+
+  switch (status) {
+    case "done":
+      return {
+        cardClass: "done",
+        icon: "✔️",
+      };
+
+    case "in_progress":
+      return {
+        cardClass: "in-progress",
+        icon: "⏱️",
+      };
+
+    default:
+      return {
+        cardClass: "read",
+        icon: "🔔",
+      };
+  }
+};
+
+  const handleNotificationClick = async (id: number) => {
+  setNotifications((prev) =>
+    prev.map((notification) =>
+      notification.id === id
+        ? {
+            ...notification,
+            is_read: true,
+          }
+        : notification,
+    ),
+  );
+
+  // Future database update
+  /*
+  await db.notifications.update({
+    is_read: true
+  })
+  */
+};
 
   return (
     <div className="notifications-page">
@@ -91,42 +127,38 @@ export const Notifications: React.FC = () => {
         <h1>Notifications</h1>
       </div>
 
-      <div className="notifications-container">
-        {notifications.map((notification) => (
-          <div
-            key={notification.id}
-            className={`notification-card ${getCategoryClass(
-              notification.category,
-            )} ${notification.read ? "" : "unread"}`}
-          >
-            <div className="notification-icon">
-              {notification.category === "reward"
-                ? "🏆"
-                : notification.category === "sla"
-                  ? "⏱️"
-                  : notification.category === "ai"
-                    ? "🧠"
-                    : notification.category === "location"
-                      ? "📍"
-                      : "✔️"}
-            </div>
+      {notifications.map((notification) => {
+  const style = getNotificationStyle(
+    notification.status,
+    notification.is_read,
+  );
 
-            <div className="notification-content">
-              <h3>{notification.title}</h3>
-
-              <p>{notification.message}</p>
-
-              {notification.reportId && (
-                <span className="report-tag">
-                  Report: {notification.reportId}
-                </span>
-              )}
-
-              <small>{notification.date}</small>
-            </div>
-          </div>
-        ))}
+  return (
+    <div
+      key={notification.id}
+      onClick={() =>
+        handleNotificationClick(notification.id)
+      }
+      className={`notification-card ${style.cardClass}`}
+    >
+      <div className="notification-icon">
+        {style.icon}
       </div>
+
+      <div className="notification-content">
+        <h3>{notification.title}</h3>
+
+        <p>{notification.message}</p>
+
+        <small>
+          {new Date(
+            notification.created_at,
+          ).toLocaleString()}
+        </small>
+      </div>
+    </div>
+  );
+})}
     </div>
   );
 };
