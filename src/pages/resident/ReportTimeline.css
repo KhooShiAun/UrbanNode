@@ -1,0 +1,63 @@
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline__item {
+  position: relative;
+  display: flex;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-md);
+  padding-left: 4px;
+}
+
+.timeline__item:last-child {
+  padding-bottom: 0;
+}
+
+/* Connector line between dots. */
+.timeline__item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 14px;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-outline-variant);
+}
+
+.timeline__dot {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  margin-top: 3px;
+  border-radius: var(--radius-full);
+  /* Completed steps are muted; the current (last) step is solid green. */
+  background: var(--color-outline-variant);
+}
+
+.timeline__item--current .timeline__dot {
+  background: var(--color-primary);
+}
+
+.timeline__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeline__event {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-on-surface);
+}
+
+.timeline__meta {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
