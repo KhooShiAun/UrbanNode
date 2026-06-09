@@ -1,0 +1,183 @@
+.home-page {
+  padding: 32px 56px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.profile-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #bfc9c1;
+  border-radius: 50%;
+  background: white;
+  color: #145c3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.greeting-card,
+.stat-card,
+.report-list {
+  background: white;
+  border: 1px solid #bfc9c1;
+}
+
+.greeting-card {
+  border-radius: 12px;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.greeting-icon {
+  color: #1a1c1b;
+  display: flex;
+}
+
+.greeting-text h1 {
+  margin: 0;
+  color: #145c3d;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.greeting-text p {
+  margin-top: 8px;
+  color: #404943;
+  font-size: 16px;
+}
+
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 44px;
+}
+
+.stat-card {
+  border-radius: 8px;
+  padding: 24px 28px;
+  min-height: 150px;
+}
+
+.stat-top,
+.recent-header,
+.report-item,
+.report-left,
+.report-right,
+.stat-icon,
+.report-icon {
+  display: flex;
+  align-items: center;
+}
+
+.stat-top,
+.recent-header,
+.report-item {
+  justify-content: space-between;
+}
+
+.stat-icon {
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.stat-icon.submitted,
+.stat-icon.resolved {
+  background: #a0f4c8;
+  color: #145c3d;
+}
+
+.stat-icon.progress {
+  background: #fce7b2;
+  color: #7a5200;
+}
+
+.stat-card h2 {
+  font-size: 44px;
+  color: #145c3d;
+  margin-top: 36px;
+  margin-bottom: 0;
+}
+
+.recent-section {
+  margin-top: 8px;
+}
+
+.recent-header {
+  margin-bottom: 16px;
+}
+
+.view-all {
+  color: #145c3d;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.report-list {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.report-item {
+  padding: 24px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.report-item:last-child {
+  border-bottom: none;
+}
+
+.report-left {
+  gap: 20px;
+}
+
+.report-icon {
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: #f1f1f1;
+}
+
+.report-left h3 {
+  margin: 0;
+}
+
+.report-left p {
+  margin-top: 4px;
+  color: #666;
+}
+
+.report-right {
+  gap: 16px;
+}
+
+.status-progress,
+.status-resolved {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.status-progress {
+  background: #fff1cc;
+  color: #7a5200;
+}
+
+.status-resolved {
+  background: #dff7e8;
+  color: #146b43;
+}
