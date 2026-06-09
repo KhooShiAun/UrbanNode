@@ -49,6 +49,7 @@ export const bear_progress = pgTable('bear_progress', {
     .references(() => users.id)
     .unique(),
   level: integer('level').default(1),
+  total_submitted: integer('total_submitted').default(0),
   total_resolved: integer('total_resolved').default(0),
   gear_unlocked: text('gear_unlocked')
     .array()

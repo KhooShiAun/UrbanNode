@@ -1,0 +1,61 @@
+.un-community-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  width: 100%;
+}
+
+.un-community-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.un-community-page__title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-on-surface);
+}
+
+.un-community-page__subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.un-community-page__divider {
+  border: none;
+  border-top: 1px solid var(--color-outline-variant);
+  margin: 0;
+}
+
+/* Profile summary card at top */
+.un-community-page__profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.un-community-page__profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.un-community-page__profile-name {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-on-surface);
+}
+
+.un-community-page__profile-meta {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
