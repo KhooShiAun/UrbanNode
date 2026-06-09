@@ -7,6 +7,12 @@ export type { IconButtonProps } from './IconButton'
 export { Input } from './Input'
 export type { InputProps } from './Input'
 
+export { TextArea } from './TextArea'
+export type { TextAreaProps } from './TextArea'
+
+export { Stepper } from './Stepper'
+export type { StepperProps, StepperStep } from './Stepper'
+
 export { Card } from './Card'
 export type { CardProps } from './Card'
 

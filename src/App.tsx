@@ -20,6 +20,7 @@ import { Uncategorised } from './pages/worker/Uncategorised'
 import { WorkerNotifications } from './pages/worker/Notifications'
 import { WorkerProfile } from './pages/worker/Profile'
 import { TicketDetail } from './pages/worker/TicketDetail'
+import FAQ from './pages/resident/FAQ'
 import './App.css'
 
 function App() {
@@ -44,7 +45,7 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/help" element={<Help />} />
+        <Route path="/help" element={<FAQ />} />
       </Route>
 
       <Route
