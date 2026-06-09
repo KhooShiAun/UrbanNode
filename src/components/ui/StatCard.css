@@ -1,0 +1,45 @@
+.un-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-xs);
+  animation: un-stat-card-enter 0.5s ease both;
+  animation-delay: var(--un-stagger, 0s);
+  padding: var(--space-lg);
+}
+
+@keyframes un-stat-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.un-stat-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.un-stat-card__value {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--color-on-surface);
+  font-variant-numeric: tabular-nums;
+}
+
+.un-stat-card__label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-on-surface-variant);
+  text-transform: capitalize;
+}
+

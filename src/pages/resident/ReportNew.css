@@ -1,0 +1,200 @@
+.report-new {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.report-new__page-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.report-new__card {
+  padding: var(--space-md);
+}
+
+.report-new__step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.report-new__step-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.report-new__step-title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.report-new__step-sub {
+  font-size: var(--text-base);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+.report-new__counter {
+  align-self: flex-end;
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+/* Photo upload */
+.report-new__photo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: var(--space-xs);
+}
+
+.report-new__photo-label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-on-surface);
+}
+
+.report-new__file-input {
+  display: none;
+}
+
+.report-new__photo-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.report-new__photo-preview img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-outline-variant);
+}
+
+.report-new__photo-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.report-new__photo-name {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+  word-break: break-all;
+}
+
+/* Geolocation */
+.report-new__geo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.report-new__geo-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+}
+
+.report-new__geo-status--ok {
+  color: var(--color-primary);
+}
+
+.report-new__geo-status--err {
+  color: var(--color-error);
+}
+
+/* Review */
+.report-new__review {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+}
+
+.report-new__review-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-outline-variant);
+}
+
+.report-new__review-row:last-child {
+  border-bottom: none;
+}
+
+.report-new__review-row dt {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-on-surface-variant);
+}
+
+.report-new__review-row dd {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin: 0;
+  color: var(--color-on-surface);
+}
+
+.report-new__review-coords {
+  color: var(--color-on-surface-variant);
+}
+
+.report-new__review-photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-outline-variant);
+}
+
+.report-new__edit {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.report-new__edit:hover {
+  text-decoration: underline;
+}
+
+/* Footer actions */
+.report-new__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-outline-variant);
+}
+
+@media (max-width: 640px) {
+  .report-new__review-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

@@ -1,0 +1,110 @@
+.un-report-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.un-report-progress__track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* The background line connecting all nodes */
+.un-report-progress__line-bg {
+  position: absolute;
+  top: 12px; /* Center of the 24px node */
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: var(--color-surface-container-low);
+  z-index: 0;
+}
+
+/* The active filled line connecting completed/active nodes */
+.un-report-progress__line-fill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  height: 2px;
+  background: var(--color-primary);
+  z-index: 1;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.un-report-progress__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  z-index: 2; /* Sit above the line */
+  position: relative;
+  width: 80px; /* Give label enough room to center */
+}
+
+/* The circle node */
+.un-report-progress__node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-container-low);
+  border: 2px solid var(--color-surface-container-low);
+  color: transparent;
+  font-size: 12px;
+  transition: all 0.4s ease;
+}
+
+/* Label text below the node */
+.un-report-progress__label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-on-surface-variant);
+  text-align: center;
+  transition: color 0.4s ease;
+}
+
+/* -- States -- */
+
+/* Upcoming (gray, default) */
+
+/* Active (current step) */
+.un-report-progress__step--active .un-report-progress__node {
+  background: var(--color-surface);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  /* Pulse animation for active step */
+  animation: un-pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+.un-report-progress__step--active .un-report-progress__label {
+  color: var(--color-primary);
+  font-weight: var(--weight-bold);
+}
+
+/* Completed */
+.un-report-progress__step--completed .un-report-progress__node {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.un-report-progress__step--completed .un-report-progress__label {
+  color: var(--color-on-surface);
+}
+
+@keyframes un-pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(15, 82, 56, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(15, 82, 56, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(15, 82, 56, 0);
+  }
+}

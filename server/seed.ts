@@ -170,11 +170,12 @@ async function main() {
   console.log('🐻 Inserting bear progress...')
   await db.insert(bear_progress).values({
     user_id: sarah.id,
-    level: 2,
-    total_resolved: 9,
-    gear_unlocked: ['Safety Helmet', 'Utility Vest'],
+    level: 1,
+    total_submitted: 10,
+    total_resolved: 4,
+    gear_unlocked: ['Safety Helmet', 'Utility Vest', 'Safety Gloves'],
   })
-  console.log('   → Sarah: level 2, 9 resolved, 2 gear unlocked')
+  console.log('   → Sarah: level 1 (Bronze), 10 submitted, 4 resolved, 3 gear unlocked')
 
   // 6. Report timeline — status progression for the resolved reports.
   console.log('🕓 Inserting report timeline entries...')
