@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui'
-import { CommunityBearProfile, LevelUpOverlay } from '@/components/community-bear'
-import { useBearProfile } from '@/hooks/useBearProfile'
+import { CommunityBearProfile, LevelUpOverlay, type GearItem } from '@/components/community-bear'
+import { useBearProfile, type BearProfileData } from '@/hooks/useBearProfile'
 import './CommunityBearPage.css'
 
 // ── Page component ───────────────────────────────────────────────────
@@ -118,7 +118,7 @@ export function CommunityBearPage() {
           variant="secondary" 
           size="sm" 
           onClick={() => {
-            mutate(prev => prev ? { ...prev, submitted: prev.submitted + 10 } : null);
+            mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: prev.submitted + 10 } : null);
             fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_submitted' }) })
               .then(() => refetch());
           }}
@@ -129,7 +129,7 @@ export function CommunityBearPage() {
           variant="secondary" 
           size="sm" 
           onClick={() => {
-            mutate(prev => prev ? { ...prev, submitted: prev.submitted + 10, resolved: prev.resolved + 10 } : null);
+            mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: prev.submitted + 10, resolved: prev.resolved + 10 } : null);
             fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_resolved' }) })
               .then(() => refetch());
           }}
@@ -141,7 +141,7 @@ export function CommunityBearPage() {
           size="sm" 
           style={{ color: 'var(--color-error)' }}
           onClick={() => {
-            mutate(prev => prev ? { ...prev, submitted: 0, resolved: 0, currentLevel: 'Bronze', gear: prev.gear.map(g => ({ ...g, unlocked: false })) } : null);
+            mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: 0, resolved: 0, currentLevel: 'Bronze', gear: prev.gear.map((g: GearItem) => ({ ...g, unlocked: false })) } : null);
             fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'reset' }) })
               .then(() => refetch());
           }}

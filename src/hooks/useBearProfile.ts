@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, type Dispatch, type SetStateAction } from 'react'
 import type { GearItem } from '@/components/community-bear'
 
 // ── Types ───────────────────────────────────────────────────────────
@@ -17,7 +17,7 @@ type UseBearProfileResult = {
   loading: boolean
   error: string | null
   refetch: () => void
-  mutate: (data: BearProfileData) => void
+  mutate: Dispatch<SetStateAction<BearProfileData | null>>
 }
 
 // ── Raw API response shape ──────────────────────────────────────────

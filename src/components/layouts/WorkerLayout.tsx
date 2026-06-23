@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Avatar, Input } from '@/components/ui'
 import { SidebarLayout, type NavItem } from './SidebarLayout'
 import {
@@ -24,7 +25,7 @@ const FOOTER_ITEMS: NavItem[] = [
   { to: '/signin', label: 'Sign Out', icon: <LogOut /> },
 ]
 
-function WorkerTopBar() {
+function WorkerTopBar({ userName }: { userName: string }) {
   return (
     <>
       <div className="un-worker-search">
@@ -34,17 +35,34 @@ function WorkerTopBar() {
           iconLeft={<Search />}
         />
       </div>
-      <Avatar name="Ahmad bin Ali" size="sm" />
+      <Avatar name={userName} size="sm" />
     </>
   )
 }
 
 export function WorkerLayout() {
+  const [userName, setUserName] = useState<string>('Ahmad bin Ali')
+
+  useEffect(() => {
+    let active = true
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (active && data?.full_name) {
+          setUserName(data.full_name)
+        }
+      })
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [])
+
   return (
     <SidebarLayout
       navItems={NAV_ITEMS}
       footerItems={FOOTER_ITEMS}
-      topBar={<WorkerTopBar />}
+      topBar={<WorkerTopBar userName={userName} />}
       variantClass="un-shell--worker"
     />
   )

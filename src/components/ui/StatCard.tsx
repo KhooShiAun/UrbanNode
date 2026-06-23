@@ -1,5 +1,4 @@
 import type { HTMLAttributes, ReactNode } from 'react'
-import { useEffect, useRef, useState } from 'react'
 import { Card } from './Card'
 import './StatCard.css'
 
