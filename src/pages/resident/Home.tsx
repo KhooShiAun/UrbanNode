@@ -2,14 +2,22 @@ import { useEffect, useState } from "react";
 import {
   User,
   ClipboardList,
-  ClipboardClock,
+  Clock,
   CheckCircle,
   AlertTriangle,
   Lightbulb,
-  PaintbrushVertical,
-  ChevronRight,
+  Paintbrush,
 } from "lucide-react";
+
 import "./Home.css";
+
+type Report = {
+  id: number;
+  title: string;
+  status: string;
+  category?: string;
+  created_at?: string;
+};
 
 export function Home() {
   const hour = new Date().getHours();
@@ -19,109 +27,203 @@ export function Home() {
   else if (hour < 18) greeting = "Good afternoon";
 
   const [userName, setUserName] = useState("User");
+  const [reports, setReports] = useState<Report[]>([]);
 
-useEffect(() => {
-fetch("/api/auth/me", {
-  credentials: "include",
-})
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.full_name) {
-        setUserName(data.full_name);
+  // 🟡 FIXED: Now correctly checks res.ok and handles errors cleanly
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch user");
+        }
+
+        const data = await res.json();
+        setUserName(data.full_name ?? "User");
+      } catch (error) {
+        console.error("Unable to load user:", error);
+        setUserName("User"); // Fallback on error path
       }
-    })
-    .catch(() => {
-      setUserName("User");
-    });
-}, []);
+    }
+
+    loadUser();
+  }, []);
+
+  // 🟠 FIXED: Deriving stats directly from the fetched reports data array
+  useEffect(() => {
+    async function loadReports() {
+      try {
+        const res = await fetch("/api/reports", {
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch reports");
+        }
+
+        const data = await res.json();
+        setReports(data);
+      } catch (error) {
+        console.error("Unable to load reports:", error);
+        setReports([]);
+      }
+    }
+
+    loadReports();
+  }, []);
+
+  const totalReports = reports.length;
+
+  const reportsInProgress = reports.filter(
+    (report) =>
+      report.status === "in_progress" ||
+      report.status === "In Progress" ||
+      report.status === "pending"
+  ).length;
+
+  const reportsResolved = reports.filter(
+    (report) =>
+      report.status === "resolved" ||
+      report.status === "Resolved" ||
+      report.status === "completed"
+  ).length;
 
   const stats = [
-    { title: "Total Reports Submitted", value: 42, icon: ClipboardList },
-    { title: "Reports In Progress", value: 3, icon: ClipboardClock },
-    { title: "Reports Resolved", value: 39, icon: CheckCircle },
+    {
+      id: "submitted",
+      title: "Total Reports Submitted",
+      value: totalReports,
+      icon: ClipboardList,
+    },
+    {
+      id: "progress",
+      title: "Reports In Progress",
+      value: reportsInProgress,
+      icon: Clock,
+    },
+    {
+      id: "resolved",
+      title: "Reports Resolved",
+      value: reportsResolved,
+      icon: CheckCircle,
+    },
   ];
 
-  const reports = [
-    { title: "Pothole on 5th Avenue", date: "Reported Oct 12, 2023", status: "In Progress", icon: AlertTriangle },
-    { title: "Broken Streetlight", date: "Reported Oct 10, 2023", status: "Resolved", icon: Lightbulb },
-    { title: "Graffiti on Wall", date: "Reported Oct 05, 2023", status: "Resolved", icon: PaintbrushVertical },
-  ];
+  const recentReports = reports.slice(0, 3);
+
+  function getReportIcon(category?: string) {
+    const value = category?.toLowerCase() ?? "";
+
+    if (value.includes("light")) return Lightbulb;
+    if (value.includes("graffiti")) return Paintbrush;
+
+    return AlertTriangle;
+  }
+
+  function formatReportDate(date?: string) {
+    if (!date) return "Recently reported";
+
+    return `Reported ${new Date(date).toLocaleDateString("en-MY", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })}`;
+  }
+
+  function formatStatus(status: string) {
+    if (status === "in_progress" || status === "pending") return "In Progress";
+    if (status === "resolved" || status === "completed") return "Resolved";
+    return status;
+  }
 
   return (
     <div className="home-page">
-
-
       <section className="greeting-card">
         <div className="greeting-icon">
           <User size={42} />
         </div>
 
         <div className="greeting-text">
-          <h1>{greeting}, {userName}.</h1>
+          <h1>
+            {greeting}, {userName}.
+          </h1>
           <p>Help keep your city safe and beautiful today.</p>
         </div>
       </section>
 
+      {/* Stats Cards Section */}
       <section className="stats-section">
         {stats.map((item) => {
           const Icon = item.icon;
 
           return (
-            <div className="stat-card" key={item.title}>
+            <div key={item.id} className="stat-card">
               <div className="stat-top">
                 <p>{item.title}</p>
-<div className={`stat-icon ${item.title === "Total Reports Submitted" ? "submitted" :
-  item.title === "Reports In Progress" ? "progress" : "resolved"}`}>
-  <Icon size={20} />
-</div>
+
+                <div className={`stat-icon ${item.id}`}>
+                  <Icon size={20} />
+                </div>
               </div>
+
               <h2>{item.value}</h2>
             </div>
           );
         })}
       </section>
 
+      {/* Recent Reports List */}
       <section className="recent-section">
         <div className="recent-header">
           <h2>My Recent Reports</h2>
-          <a href="/reports" className="view-all">
+
+          <a href="reports" className="view-all">
             View All
           </a>
         </div>
 
         <div className="report-list">
-          {reports.map((report) => {
-            const Icon = report.icon;
+          {recentReports.length > 0 ? (
+            recentReports.map((report) => {
+              const Icon = getReportIcon(report.category);
+              const statusText = formatStatus(report.status);
 
-            return (
-              <div className="report-item" key={report.title}>
-                <div className="report-left">
-                  <div className="report-icon">
-                    <Icon size={22} />
+              return (
+                // ⚪ FIXED: Using report.id instead of .title for stable React keys
+                <div key={report.id} className="report-item">
+                  <div className="report-left">
+                    <div className="report-icon">
+                      <Icon size={22} />
+                    </div>
+
+                    <div>
+                      <h3>{report.title}</h3>
+                      <p>{formatReportDate(report.created_at)}</p>
+                    </div>
                   </div>
 
-                  <div>
-                    <h3>{report.title}</h3>
-                    <p>{report.date}</p>
+                  <div className="report-right">
+                    <span
+                      className={
+                        statusText === "Resolved"
+                          ? "status-resolved"
+                          : "status-progress"
+                      }
+                    >
+                      {statusText}
+                    </span>
                   </div>
                 </div>
-
-                <div className="report-right">
-                  <span
-                    className={
-                      report.status === "Resolved"
-                        ? "status-resolved"
-                        : "status-progress"
-                    }
-                  >
-                    {report.status}
-                  </span>
-
-                  <ChevronRight size={20} />
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="empty-reports">
+              No recent reports found.
+            </div>
+          )}
         </div>
       </section>
     </div>
