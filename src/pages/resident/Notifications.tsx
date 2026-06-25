@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiGet, apiSend } from "@/lib/api";
 import "./Notifications.css";
 
 interface Notification {
@@ -14,9 +15,9 @@ export const Notifications: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    fetch("/api/notifications")
-      .then((res) => res.json())
-      .then((data) => setNotifications(data));
+    apiGet<Notification[]>("/api/notifications")
+      .then((data) => setNotifications(data))
+      .catch(() => {});
   }, []);
 
   const getNotificationStyle = (
@@ -55,7 +56,11 @@ export const Notifications: React.FC = () => {
     setNotifications((prev) =>
       prev.map((n) => n.id === id ? { ...n, is_read: true } : n)
     );
-    await fetch(`/api/notifications/${id}/read`, { method: "PATCH" });
+    try {
+      await apiSend(`/api/notifications/${id}/read`, "PATCH");
+    } catch (err) {
+      console.error("Failed to mark notification as read", err);
+    }
   };
 
   return (

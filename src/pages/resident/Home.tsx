@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiGet } from "@/lib/api";
 import {
   User,
   ClipboardList,
@@ -21,10 +22,7 @@ export function Home() {
   const [userName, setUserName] = useState("User");
 
 useEffect(() => {
-fetch("/api/auth/me", {
-  credentials: "include",
-})
-    .then((res) => res.json())
+apiGet<{ full_name?: string }>("/api/auth/me")
     .then((data) => {
       if (data.full_name) {
         setUserName(data.full_name);

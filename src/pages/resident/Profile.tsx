@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { apiGet, apiSend } from '@/lib/api'
 import { Avatar, Badge, Card, Input, Button } from '@/components/ui'
 import { Check, Clock, Clipboard } from '@/components/icons'
 import './Profile.css'
@@ -11,27 +12,24 @@ export function Profile() {
   const [email, setEmail] = useState('')
 
   useEffect(() => {
-    fetch('/api/auth/me', { credentials: 'include' })
-      .then(res => res.json())
+    apiGet<{ full_name: string; email: string; role: string; created_at: string }>('/api/auth/me')
       .then(data => {
         setUser(data)
         setFullName(data.full_name)
         setRole(data.role)
         setEmail(data.email)
       })
+      .catch(() => {})
   }, [])
 
   async function handleSave() {
-    await fetch('/api/me', {
-      method: 'PUT',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ full_name: fullName, email: email })
-    })
-  
-    setUser(prev => prev ? { ...prev, full_name: fullName, email: email } : prev)
-
-    alert('Profile saved successfully!')
+    try {
+      await apiSend('/api/me', 'PUT', { full_name: fullName, email: email })
+      setUser(prev => prev ? { ...prev, full_name: fullName, email: email } : prev)
+      alert('Profile saved successfully!')
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Profile save failed.')
+    }
   }
   return (
     <div className="profile">

@@ -10,6 +10,7 @@ export type NavItem = {
   label: string
   icon: ReactNode
   end?: boolean
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void
 }
 
 export type CtaItem = {
@@ -67,7 +68,12 @@ export function SidebarLayout({
               to={item.to}
               end={item.end}
               className={navLinkClass}
-              onClick={closeDrawer}
+              onClick={(e) => {
+                closeDrawer()
+                if (item.onClick) {
+                  item.onClick(e)
+                }
+              }}
             >
               <span className="un-shell__nav-icon">{item.icon}</span>
               <span className="un-shell__nav-label">{item.label}</span>
@@ -84,7 +90,12 @@ export function SidebarLayout({
               to={item.to}
               end={item.end}
               className={navLinkClass}
-              onClick={closeDrawer}
+              onClick={(e) => {
+                closeDrawer()
+                if (item.onClick) {
+                  item.onClick(e)
+                }
+              }}
             >
               <span className="un-shell__nav-icon">{item.icon}</span>
               <span className="un-shell__nav-label">{item.label}</span>

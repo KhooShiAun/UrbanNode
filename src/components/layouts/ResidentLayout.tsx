@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+import { apiSend } from '@/lib/api'
 import { SidebarLayout, type CtaItem, type NavItem } from './SidebarLayout'
 import {
   Bell,
@@ -17,12 +19,6 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/notifications', label: 'Notifications', icon: <Bell /> },
 ]
 
-const FOOTER_ITEMS: NavItem[] = [
-  { to: '/profile', label: 'My Profile', icon: <Person /> },
-  { to: '/help', label: 'Help & FAQ', icon: <HelpCircle /> },
-  { to: '/signin', label: 'Sign Out', icon: <LogOut /> },
-]
-
 const CTA: CtaItem = {
   to: '/reports/new',
   label: 'Report Issue',
@@ -30,12 +26,31 @@ const CTA: CtaItem = {
 }
 
 export function ResidentLayout() {
+  const navigate = useNavigate()
+
+  const handleSignOut = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    try {
+      await apiSend('/api/auth/signout', 'POST')
+    } catch (err) {
+      console.error('Sign out failed:', err)
+    }
+    navigate('/signin')
+  }
+
+  const footerItems: NavItem[] = [
+    { to: '/profile', label: 'My Profile', icon: <Person /> },
+    { to: '/help', label: 'Help & FAQ', icon: <HelpCircle /> },
+    { to: '/signin', label: 'Sign Out', icon: <LogOut />, onClick: handleSignOut },
+  ]
+
   return (
     <SidebarLayout
       navItems={NAV_ITEMS}
-      footerItems={FOOTER_ITEMS}
+      footerItems={footerItems}
       cta={CTA}
       variantClass="un-shell--resident"
     />
   )
 }
+

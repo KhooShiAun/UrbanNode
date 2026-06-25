@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { and, desc, eq, or, ilike, isNull, asc, sql } from 'drizzle-orm'
 import { db } from '../db.ts'
-import { reports, report_timeline } from '../schema.ts'
+import { reports, report_timeline, users } from '../schema.ts'
 import { requireAuth, requireResident } from '../middleware.ts'
 import { refreshBearProgress } from './gamification.ts'
 
@@ -133,7 +133,39 @@ router.get('/:id', requireAuth, async (req, res, next) => {
       return res.status(404).json({ error: 'Report not found' })
     }
 
-    res.status(200).json(report)
+    const timelineRows = await db
+      .select({
+        status: report_timeline.status,
+        changed_at: report_timeline.changed_at,
+        notes: report_timeline.notes,
+        actor_name: users.full_name,
+        actor_role: users.role,
+      })
+      .from(report_timeline)
+      .leftJoin(users, eq(report_timeline.changed_by, users.id))
+      .where(eq(report_timeline.report_id, id))
+      .orderBy(asc(report_timeline.changed_at))
+
+    const friendlyStatusLabels: Record<string, string> = {
+      new: 'Submitted',
+      in_progress: 'In Progress',
+      resolved: 'Resolved',
+      uncategorised: 'Pending Triage',
+    }
+
+    const timeline = timelineRows.map((row) => {
+      const label = friendlyStatusLabels[row.status] || row.status
+      return {
+        label,
+        at: row.changed_at ? row.changed_at.toISOString() : new Date().toISOString(),
+        actor: row.actor_name || 'System',
+      }
+    })
+
+    res.status(200).json({
+      ...report,
+      timeline,
+    })
   } catch (err) {
     next(err)
   }
