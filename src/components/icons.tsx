@@ -163,3 +163,83 @@ export function ChevronRight(props: IconProps) {
     </Icon>
   )
 }
+
+export function Check(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M20 6 9 17l-5-5" />
+    </Icon>
+  )
+}
+
+export function MapPin(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0" />
+      <circle cx="12" cy="10" r="3" />
+    </Icon>
+  )
+}
+
+export function Camera(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <circle cx="12" cy="13" r="3.5" />
+    </Icon>
+  )
+}
+
+export function ArrowLeft(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M19 12H5" />
+      <path d="m12 19-7-7 7-7" />
+    </Icon>
+  )
+}
+
+export function ArrowRight(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M5 12h14" />
+      <path d="m12 5 7 7-7 7" />
+    </Icon>
+  )
+}
+
+export function Calendar(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M3 9h18M8 2v4M16 2v4" />
+    </Icon>
+  )
+}
+
+export function ChevronDown(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="m6 9 6 6 6-6" />
+    </Icon>
+  )
+}
+
+export function Clock(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </Icon>
+  )
+}
+
+export function AlertCircle(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 8v5" />
+      <path d="M12 16h.01" />
+    </Icon>
+  )
+}

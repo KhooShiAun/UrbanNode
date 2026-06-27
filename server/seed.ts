@@ -33,13 +33,15 @@ async function main() {
     .values([
       { full_name: 'Sarah Lim', email: 'sarah@demo.com', password_hash, role: 'resident' },
       { full_name: 'Amir Hassan', email: 'amir@demo.com', password_hash, role: 'resident' },
-      { full_name: 'Ahmad bin Ali', email: 'ahmad@demo.com', password_hash, role: 'worker' },
+      { full_name: 'Ahmad bin Ali', email: 'ahmad@demo.com', password_hash, role: 'worker', position: 'Senior Maintenance Worker', department: 'Public Works Department' },
+      { full_name: 'M. Chen', email: 'chen@demo.com', password_hash, role: 'worker', position: 'Maintenance Worker', department: 'Public Works Department' },
     ])
     .returning({ id: users.id, email: users.email })
 
   const sarah = insertedUsers.find((u) => u.email === 'sarah@demo.com')!
   const ahmad = insertedUsers.find((u) => u.email === 'ahmad@demo.com')!
-  console.log(`   → ${insertedUsers.length} users (2 residents, 1 worker)`)
+  const chen = insertedUsers.find((u) => u.email === 'chen@demo.com')!
+  console.log(`   → ${insertedUsers.length} users (2 residents, 2 workers)`)
 
   // 3. Gear items (inserted regardless of other data).
   console.log('🎒 Inserting gear items...')
@@ -67,6 +69,8 @@ async function main() {
         severity: 'urgent',
         status: 'resolved',
         sla_deadline: new Date(now - 5 * DAY),
+        assignee_id: ahmad.id,
+        resolution_notes: 'Fallen tree cleared, walkway swept and reopened.',
         created_at: new Date(now - 8 * DAY),
       },
       {
@@ -78,6 +82,7 @@ async function main() {
         severity: 'urgent',
         status: 'in_progress',
         sla_deadline: new Date(now + 1 * DAY),
+        assignee_id: ahmad.id,
         created_at: new Date(now - 1 * DAY),
       },
       {
@@ -89,6 +94,8 @@ async function main() {
         severity: 'routine',
         status: 'resolved',
         sla_deadline: new Date(now - 2 * DAY),
+        assignee_id: chen.id,
+        resolution_notes: 'Bin emptied and area disinfected.',
         created_at: new Date(now - 7 * DAY),
       },
       {
@@ -100,6 +107,7 @@ async function main() {
         severity: 'routine',
         status: 'new',
         sla_deadline: new Date(now + 5 * DAY),
+        assignee_id: null,
         created_at: new Date(now - 2 * DAY),
       },
       {
@@ -111,6 +119,7 @@ async function main() {
         severity: 'routine',
         status: 'in_progress',
         sla_deadline: new Date(now + 3 * DAY),
+        assignee_id: chen.id,
         created_at: new Date(now - 3 * DAY),
       },
       {
@@ -122,6 +131,8 @@ async function main() {
         severity: 'routine',
         status: 'resolved',
         sla_deadline: new Date(now - 4 * DAY),
+        assignee_id: ahmad.id,
+        resolution_notes: 'Bulb replaced, function restored.',
         created_at: new Date(now - 9 * DAY),
       },
       {
@@ -132,6 +143,7 @@ async function main() {
         location_lng: '101.7080',
         severity: 'low',
         status: 'new',
+        assignee_id: null,
         created_at: new Date(now - 4 * DAY),
       },
       {
@@ -142,6 +154,8 @@ async function main() {
         location_lng: '101.6860',
         severity: 'low',
         status: 'resolved',
+        assignee_id: chen.id,
+        resolution_notes: 'Pavement crack patched with asphalt.',
         created_at: new Date(now - 10 * DAY),
       },
       {
@@ -152,6 +166,7 @@ async function main() {
         location_lng: '101.6710',
         severity: 'low',
         status: 'new',
+        assignee_id: null,
         created_at: new Date(now - 1 * DAY),
       },
       {
@@ -160,21 +175,35 @@ async function main() {
         location_text: 'Near Perdana Botanical Garden',
         severity: 'uncategorised',
         status: 'uncategorised',
+        assignee_id: null,
         created_at: new Date(now - 6 * DAY),
+      },
+      {
+        user_id: sarah.id,
+        description: 'Storm drain inspection needed due to local minor flooding.',
+        location_text: 'River District, Kuala Lumpur',
+        location_lat: '3.1350',
+        location_lng: '101.6920',
+        severity: 'urgent',
+        status: 'in_progress',
+        sla_deadline: new Date(now - 1.5 * DAY),
+        assignee_id: ahmad.id,
+        created_at: new Date(now - 3 * DAY),
       },
     ])
     .returning({ id: reports.id, status: reports.status })
-  console.log(`   → ${insertedReports.length} reports (2 urgent, 4 routine, 3 low, 1 uncategorised)`)
+  console.log(`   → ${insertedReports.length} reports (3 urgent, 4 routine, 3 low, 1 uncategorised)`)
 
   // 5. Bear progress for Sarah.
   console.log('🐻 Inserting bear progress...')
   await db.insert(bear_progress).values({
     user_id: sarah.id,
-    level: 2,
-    total_resolved: 9,
-    gear_unlocked: ['Safety Helmet', 'Utility Vest'],
+    level: 1,
+    total_submitted: 11,
+    total_resolved: 4,
+    gear_unlocked: ['Safety Helmet', 'Utility Vest', 'Safety Gloves'],
   })
-  console.log('   → Sarah: level 2, 9 resolved, 2 gear unlocked')
+  console.log('   → Sarah: level 1 (Bronze), 11 submitted, 4 resolved, 3 gear unlocked')
 
   // 6. Report timeline — status progression for the resolved reports.
   console.log('🕓 Inserting report timeline entries...')
@@ -208,7 +237,7 @@ async function main() {
   await db.insert(report_timeline).values(timelineRows)
   console.log(`   → ${timelineRows.length} timeline entries across ${resolvedReports.length} resolved reports`)
 
-  // 7. Notifications for Sarah (1 unread, 2 read).
+  // 7. Notifications for Sarah (1 unread, 2 read) and Ahmad (2 notifications).
   console.log('🔔 Inserting notifications...')
   await db.insert(notifications).values([
     {
@@ -229,8 +258,20 @@ async function main() {
       is_read: false,
       created_at: new Date(now - 2 * DAY),
     },
+    {
+      user_id: ahmad.id,
+      message: 'New Urgent report submitted near Taman Tugu - requires immediate attention',
+      is_read: false,
+      created_at: new Date(now - 1 * DAY),
+    },
+    {
+      user_id: ahmad.id,
+      message: 'Report UR-043 has been assigned to you',
+      is_read: false,
+      created_at: new Date(now - 2 * DAY),
+    },
   ])
-  console.log('   → 3 notifications (2 read, 1 unread)')
+  console.log('   → 5 notifications (3 for resident, 2 for worker)')
 
   console.log('\n✅ Seed complete.')
   console.log('   Resident login: sarah@demo.com / demo1234')

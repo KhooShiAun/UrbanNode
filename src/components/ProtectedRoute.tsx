@@ -10,7 +10,9 @@ type ProtectedRouteProps = {
 }
 
 export function ProtectedRoute({ requiredRole, children }: ProtectedRouteProps) {
-  const [state, setState] = useState<AuthState>('loading')
+
+
+const [state, setState] = useState<AuthState>('loading')
 
   useEffect(() => {
     let active = true
@@ -39,6 +41,8 @@ export function ProtectedRoute({ requiredRole, children }: ProtectedRouteProps) 
       active = false
     }
   }, [requiredRole])
+  
+
 
   if (state === 'loading') {
     return <Spinner fullPage />
@@ -50,3 +54,4 @@ export function ProtectedRoute({ requiredRole, children }: ProtectedRouteProps) 
 
   return <>{children}</>
 }
+

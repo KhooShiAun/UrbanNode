@@ -1,0 +1,9 @@
+.un-field__control--textarea {
+  align-items: stretch;
+}
+
+.un-field__textarea {
+  resize: vertical;
+  min-height: 96px;
+  line-height: var(--leading-normal);
+}

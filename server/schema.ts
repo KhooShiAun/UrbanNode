@@ -16,6 +16,8 @@ export const users = pgTable('users', {
   password_hash: text('password_hash').notNull(),
   // 'resident' | 'worker'
   role: text('role').notNull(),
+  position: text('position'),
+  department: text('department'),
   created_at: timestamp('created_at').defaultNow(),
 })
 
@@ -32,6 +34,8 @@ export const reports = pgTable('reports', {
   // 'new' | 'in_progress' | 'resolved' | 'uncategorised'
   status: text('status').notNull().default('new'),
   sla_deadline: timestamp('sla_deadline'),
+  assignee_id: integer('assignee_id').references(() => users.id),
+  resolution_notes: text('resolution_notes'),
   created_at: timestamp('created_at').defaultNow(),
 })
 
@@ -49,6 +53,7 @@ export const bear_progress = pgTable('bear_progress', {
     .references(() => users.id)
     .unique(),
   level: integer('level').default(1),
+  total_submitted: integer('total_submitted').default(0),
   total_resolved: integer('total_resolved').default(0),
   gear_unlocked: text('gear_unlocked')
     .array()

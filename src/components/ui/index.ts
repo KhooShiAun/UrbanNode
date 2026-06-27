@@ -7,6 +7,12 @@ export type { IconButtonProps } from './IconButton'
 export { Input } from './Input'
 export type { InputProps } from './Input'
 
+export { TextArea } from './TextArea'
+export type { TextAreaProps } from './TextArea'
+
+export { Stepper } from './Stepper'
+export type { StepperProps, StepperStep } from './Stepper'
+
 export { Card } from './Card'
 export type { CardProps } from './Card'
 
@@ -30,3 +36,9 @@ export type { ModalProps } from './Modal'
 
 export { ToastProvider, useToast } from './Toast'
 export type { ToastType } from './Toast'
+
+export { StatCard } from './StatCard'
+export type { StatCardProps } from './StatCard'
+
+export { ProgressBar } from './ProgressBar'
+export type { ProgressBarProps } from './ProgressBar'
