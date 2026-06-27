@@ -181,3 +181,10 @@
   background: #dff7e8;
   color: #146b43;
 }
+
+.empty-reports {
+  padding: 24px;
+  color: #666;
+  font-size: 15px;
+  background: #ffffff;
+}
