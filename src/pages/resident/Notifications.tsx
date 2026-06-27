@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiGet, apiSend } from "@/lib/api";
 import "./Notifications.css";
 
 // ✅ FIX: Aligned interface to real schema — removed nonexistent `title` and
@@ -18,15 +19,9 @@ export const Notifications: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // ✅ FIX: Added credentials:'include' so session cookie is sent,
-    //    res.ok check so HTTP errors don't silently succeed,
-    //    and .catch() so network failures become visible errors
-    //    (mirrors the MyReports pattern).
-    fetch("/api/notifications", { credentials: "include" })
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
+    // ✅ FIX: Added credentials:'include' (via apiGet) so session cookie is sent,
+    //    handling error/loading state correctly.
+    apiGet<Notification[]>("/api/notifications")
       .then((data) => {
         setNotifications(data);
         setLoading(false);
@@ -61,14 +56,8 @@ export const Notifications: React.FC = () => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
     );
-
     try {
-      const res = await fetch(`/api/notifications/${id}/read`, {
-        method: "PATCH",
-        // ✅ FIX: credentials included so auth cookie is sent to the now-protected route
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await apiSend(`/api/notifications/${id}/read`, "PATCH");
     } catch (err) {
       // ✅ FIX: Roll back optimistic update on failure so UI reflects truth
       console.error("Failed to mark notification as read:", err);

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { apiGet, apiSend } from '@/lib/api'
 import { Avatar, Card, Input, Button, useToast } from '@/components/ui'
 import './Profile.css'
 
@@ -13,12 +14,8 @@ export function Profile() {
   const toast = useToast()
 
   useEffect(() => {
-    fetch('/api/auth/me', { credentials: 'include' })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to load profile')
-        return res.json()
-      })
-      .then((data: { id: number; full_name: string; email: string; role: string; created_at: string }) => {
+    apiGet<{ id: number; full_name: string; email: string; role: string; created_at: string }>('/api/auth/me')
+      .then(data => {
         setUser(data)
         setFullName(data.full_name)
         setEmail(data.email)
@@ -27,20 +24,14 @@ export function Profile() {
   }, [])
 
   async function handleSave() {
-    const res = await fetch('/api/me', {
-      method: 'PUT',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ full_name: fullName, email: email })
-    })
-
-    if (!res.ok) {
+    try {
+      await apiSend('/api/me', 'PUT', { full_name: fullName, email: email })
+      setUser(prev => prev ? { ...prev, full_name: fullName, email: email } : prev)
+      toast.showToast('Profile saved successfully!', 'success')
+    } catch (err) {
+      console.error(err)
       toast.showToast('Failed to save profile. Please try again.', 'error')
-      return
     }
-
-    setUser(prev => prev ? { ...prev, full_name: fullName, email: email } : prev)
-    toast.showToast('Profile saved successfully!', 'success')
   }
 
   return (

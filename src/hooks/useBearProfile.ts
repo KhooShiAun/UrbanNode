@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, type Dispatch, type SetStateAction } from 'react'
+import { apiGet } from '@/lib/api'
 import type { GearItem } from '@/components/community-bear'
 
 // ── Types ───────────────────────────────────────────────────────────
@@ -51,16 +52,7 @@ export function useBearProfile(): UseBearProfileResult {
     setError(null)
 
     try {
-      const res = await fetch('/api/gamification/profile', {
-        credentials: 'include', // send session cookie
-      })
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
-        throw new Error(body.error ?? `Server responded with ${res.status}`)
-      }
-
-      const json: ApiResponse = await res.json()
+      const json = await apiGet<ApiResponse>('/api/gamification/profile')
 
       setData({
         submitted: json.submitted,

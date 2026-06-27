@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiGet } from "@/lib/api";
 import {
   User,
   ClipboardList,
@@ -29,19 +30,11 @@ export function Home() {
   const [userName, setUserName] = useState("User");
   const [reports, setReports] = useState<Report[]>([]);
 
-  // 🟡 FIXED: Now correctly checks res.ok and handles errors cleanly
+  // 🟡 FIXED: Now correctly checks res.ok (via apiGet) and handles errors cleanly
   useEffect(() => {
     async function loadUser() {
       try {
-        const res = await fetch("/api/auth/me", {
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch user");
-        }
-
-        const data = await res.json();
+        const data = await apiGet<{ full_name?: string }>("/api/auth/me");
         setUserName(data.full_name ?? "User");
       } catch (error) {
         console.error("Unable to load user:", error);
@@ -56,15 +49,7 @@ export function Home() {
   useEffect(() => {
     async function loadReports() {
       try {
-        const res = await fetch("/api/reports", {
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch reports");
-        }
-
-        const data = await res.json();
+        const data = await apiGet<Report[]>("/api/reports");
         setReports(data);
       } catch (error) {
         console.error("Unable to load reports:", error);

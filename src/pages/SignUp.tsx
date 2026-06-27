@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { apiSend, ApiError } from '@/lib/api'
 import { AuthLayout } from '../components/AuthLayout'
 import { Button, Input, useToast } from '@/components/ui'
 import './auth.css'
@@ -40,28 +41,21 @@ export function SignUp() {
 
     setSubmitting(true)
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        // Public sign-up creates resident accounts; workers are provisioned by the city.
-        body: JSON.stringify({ full_name: fullName, email, password, role: 'resident' }),
+      const data = await apiSend<{ role: string }>('/api/auth/signup', 'POST', {
+        full_name: fullName,
+        email,
+        password,
+        role: 'resident',
       })
-      const data = await res.json().catch(() => ({}))
-
-      if (!res.ok) {
-        if (res.status === 409) {
-          setErrors({ email: data.error ?? 'That email is already registered.' })
-        } else {
-          showToast(data.error ?? 'Unable to create account. Please try again.', 'error')
-        }
-        return
-      }
 
       showToast('Account created! Welcome to UrbanNode.', 'success')
       navigate(data.role === 'worker' ? '/worker/dashboard' : '/home')
-    } catch {
-      showToast('Network error. Please check your connection and try again.', 'error')
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        setErrors({ email: err.message ?? 'That email is already registered.' })
+      } else {
+        showToast(err instanceof Error ? err.message : 'Unable to create account. Please try again.', 'error')
+      }
     } finally {
       setSubmitting(false)
     }
