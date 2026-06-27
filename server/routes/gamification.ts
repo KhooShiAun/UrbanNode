@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { eq, and, sql } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { db } from '../db.ts'
 import { bear_progress, gear_items, reports } from '../schema.ts'
 import { requireResident } from '../middleware.ts'

@@ -11,6 +11,8 @@ export type BadgeVariant =
   | 'uncategorised'
   | 'critical'
   | 'high'
+  | 'default'
+  | 'success'
 
 export type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
   variant: BadgeVariant
