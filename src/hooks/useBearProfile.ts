@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, type Dispatch, type SetStateAction } from 'react'
+import { apiGet } from '@/lib/api'
 import type { GearItem } from '@/components/community-bear'
 
 // ── Types ───────────────────────────────────────────────────────────
@@ -17,7 +18,7 @@ type UseBearProfileResult = {
   loading: boolean
   error: string | null
   refetch: () => void
-  mutate: import('react').Dispatch<import('react').SetStateAction<BearProfileData | null>>
+  mutate: Dispatch<SetStateAction<BearProfileData | null>>
 }
 
 // ── Raw API response shape ──────────────────────────────────────────
@@ -51,51 +52,27 @@ export function useBearProfile(): UseBearProfileResult {
   useEffect(() => {
     let ignore = false
 
-    const doFetch = async () => {
-      try {
-        const res = await fetch('/api/gamification/profile', {
-          credentials: 'include', // send session cookie
-        })
+    try {
+      const json = await apiGet<ApiResponse>('/api/gamification/profile')
 
-        if (ignore) return
-
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}))
-          throw new Error(body.error ?? `Server responded with ${res.status}`)
-        }
-
-        const json: ApiResponse = await res.json()
-        if (ignore) return
-
-        setData({
-          submitted: json.submitted,
-          resolved: json.resolved,
-          currentLevel: json.level.current,
-          nextLevelName: json.level.next,
-          nextLevelThreshold: json.level.threshold,
-          gear: json.gear.map((g) => ({
-            id: g.id,
-            name: g.name,
-            icon: g.icon,
-            unlocked: g.unlocked,
-            unlockCondition: g.unlockCondition,
-          })),
-        })
-      } catch (err) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : 'Failed to load bear profile')
-        }
-      } finally {
-        if (!ignore) {
-          setLoading(false)
-        }
-      }
-    }
-
-    doFetch()
-
-    return () => {
-      ignore = true
+      setData({
+        submitted: json.submitted,
+        resolved: json.resolved,
+        currentLevel: json.level.current,
+        nextLevelName: json.level.next,
+        nextLevelThreshold: json.level.threshold,
+        gear: json.gear.map((g) => ({
+          id: g.id,
+          name: g.name,
+          icon: g.icon,
+          unlocked: g.unlocked,
+          unlockCondition: g.unlockCondition,
+        })),
+      })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load bear profile')
+    } finally {
+      setLoading(false)
     }
   }, [trigger])
 

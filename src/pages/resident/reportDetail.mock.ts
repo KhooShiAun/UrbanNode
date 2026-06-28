@@ -18,6 +18,7 @@ export type Report = {
   status: string
   sla_deadline: string | null
   created_at: string
+  timeline?: TimelineEvent[]
 }
 
 export type TimelineEvent = {

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { apiGet } from '@/lib/api'
 import { Badge, Button, Card, EmptyState, Input, Spinner, Tag, useToast } from '@/components/ui'
 import { Calendar, ChevronDown, Clipboard, MapPin, Search } from '@/components/icons'
-import { buildReportDetail, type Report } from './reportDetail.mock'
+import { type Report, type TimelineEvent } from './reportDetail.mock'
 import { ReportTimeline } from './ReportTimeline'
 import {
   formatCode,
@@ -38,9 +39,7 @@ export function MyReports() {
 
     async function load() {
       try {
-        const res = await fetch('/api/reports', { credentials: 'include' })
-        if (!res.ok) throw new Error('Failed to load reports')
-        const data: Report[] = await res.json()
+        const data = await apiGet<Report[]>('/api/reports')
         if (!cancelled) setReports(data)
       } catch {
         if (!cancelled) {
@@ -198,9 +197,61 @@ export function MyReports() {
 }
 
 function ReportCardDetail({ report, onView }: { report: Report; onView: () => void }) {
-  // Lazily derive expanded detail only when the card is open. This is the seam
-  // to swap for a real GET /api/reports/:id fetch later.
-  const detail = useMemo(() => buildReportDetail(report), [report])
+  const { showToast } = useToast()
+  const [detail, setDetail] = useState<{ aiAssessment: string; slaDeadline: string | null; timeline: TimelineEvent[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadDetail() {
+      try {
+        const data = await apiGet<Report & { timeline: TimelineEvent[] }>(`/api/reports/${report.id}`)
+        if (!cancelled) {
+          const aiAssessment =
+            data.severity === 'urgent' ? 'High risk to public safety'
+            : data.severity === 'routine' ? 'Moderate risk — schedule routine repair'
+            : data.severity === 'low' ? 'Low risk — monitor and address when convenient'
+            : 'Pending assessment'
+
+          setDetail({
+            aiAssessment,
+            slaDeadline: data.sla_deadline,
+            timeline: data.timeline || [],
+          })
+        }
+      } catch {
+        if (!cancelled) {
+          showToast('Could not load report details.', 'error')
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    loadDetail()
+    return () => {
+      cancelled = true
+    }
+  }, [report.id, showToast])
+
+  if (loading) {
+    return (
+      <div className="report-detail" style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
+        <Spinner />
+      </div>
+    )
+  }
+
+  if (!detail) {
+    return (
+      <div className="report-detail">
+        <p className="report-detail__error" style={{ textAlign: 'center', color: 'var(--color-error)' }}>
+          Failed to load details.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="report-detail">
