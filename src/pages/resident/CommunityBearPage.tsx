@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui'
 import { CommunityBearProfile, LevelUpOverlay } from '@/components/community-bear'
 import { useBearProfile } from '@/hooks/useBearProfile'
@@ -10,18 +11,18 @@ export function CommunityBearPage() {
   const { data, loading, error, refetch, mutate } = useBearProfile()
 
   // State for level-up overlay
-  const [prevLevel, setPrevLevel] = useState<string | null>(null)
+  const prevLevelRef = useRef<string | null>(null)
   const [showLevelUp, setShowLevelUp] = useState(false)
 
   // Detect level-ups when data changes (e.g. after refetch)
   useEffect(() => {
     if (!data) return
 
-    if (prevLevel && prevLevel !== data.currentLevel) {
+    if (prevLevelRef.current && prevLevelRef.current !== data.currentLevel) {
       setShowLevelUp(true)
     }
-    setPrevLevel(data.currentLevel)
-  }, [data, prevLevel])
+    prevLevelRef.current = data.currentLevel
+  }, [data])
 
   // ── Loading state ──────────────────────────────────────────────────
 
@@ -103,52 +104,57 @@ export function CommunityBearPage() {
       </div>
 
       {/* Dev Controls (Only in development) */}
-      <div style={{
-        padding: '16px',
-        background: 'var(--color-surface-variant)',
-        borderRadius: '12px',
-        marginBottom: '24px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        border: '1px dashed var(--color-outline)'
-      }}>
-        <strong style={{ fontSize: '14px', color: 'var(--color-on-surface-variant)' }}>Dev Controls:</strong>
-        <Button 
-          variant="secondary" 
-          size="sm" 
-          onClick={() => {
-            mutate(prev => prev ? { ...prev, submitted: prev.submitted + 10 } : null);
-            fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_submitted' }) })
-              .then(() => refetch());
-          }}
-        >
-          +10 Submitted
-        </Button>
-        <Button 
-          variant="secondary" 
-          size="sm" 
-          onClick={() => {
-            mutate(prev => prev ? { ...prev, submitted: prev.submitted + 10, resolved: prev.resolved + 10 } : null);
-            fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_resolved' }) })
-              .then(() => refetch());
-          }}
-        >
-          +10 Resolved
-        </Button>
-        <Button 
-          variant="secondary" 
-          size="sm" 
-          style={{ color: 'var(--color-error)' }}
-          onClick={() => {
-            mutate(prev => prev ? { ...prev, submitted: 0, resolved: 0, currentLevel: 'Bronze', gear: prev.gear.map(g => ({ ...g, unlocked: false })) } : null);
-            fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'reset' }) })
-              .then(() => refetch());
-          }}
-        >
-          Reset Stats
-        </Button>
-      </div>
+      {(import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV && (
+        <div style={{
+          padding: '16px',
+          background: 'var(--color-surface-variant)',
+          borderRadius: '12px',
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          border: '1px dashed var(--color-outline)'
+        }}>
+          <strong style={{ fontSize: '14px', color: 'var(--color-on-surface-variant)' }}>Dev Controls:</strong>
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            onClick={() => {
+              mutate(prev => prev ? { ...prev, submitted: prev.submitted + 10 } : null);
+              fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_submitted' }) })
+                .then(() => refetch())
+                .catch(console.error);
+            }}
+          >
+            +10 Submitted
+          </Button>
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            onClick={() => {
+              mutate(prev => prev ? { ...prev, submitted: prev.submitted + 10, resolved: prev.resolved + 10 } : null);
+              fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_resolved' }) })
+                .then(() => refetch())
+                .catch(console.error);
+            }}
+          >
+            +10 Resolved
+          </Button>
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            style={{ color: 'var(--color-error)' }}
+            onClick={() => {
+              mutate(prev => prev ? { ...prev, submitted: 0, resolved: 0, currentLevel: 'Bronze', gear: prev.gear.map(g => ({ ...g, unlocked: false })) } : null);
+              fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'reset' }) })
+                .then(() => refetch())
+                .catch(console.error);
+            }}
+          >
+            Reset Stats
+          </Button>
+        </div>
+      )}
 
       {/* Community Bear profile with stats, progress, avatar & gear */}
       <CommunityBearProfile

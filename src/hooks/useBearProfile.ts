@@ -17,7 +17,7 @@ type UseBearProfileResult = {
   loading: boolean
   error: string | null
   refetch: () => void
-  mutate: (data: BearProfileData) => void
+  mutate: import('react').Dispatch<import('react').SetStateAction<BearProfileData | null>>
 }
 
 // ── Raw API response shape ──────────────────────────────────────────
@@ -46,46 +46,64 @@ export function useBearProfile(): UseBearProfileResult {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchProfile = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const res = await fetch('/api/gamification/profile', {
-        credentials: 'include', // send session cookie
-      })
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
-        throw new Error(body.error ?? `Server responded with ${res.status}`)
-      }
-
-      const json: ApiResponse = await res.json()
-
-      setData({
-        submitted: json.submitted,
-        resolved: json.resolved,
-        currentLevel: json.level.current,
-        nextLevelName: json.level.next,
-        nextLevelThreshold: json.level.threshold,
-        gear: json.gear.map((g) => ({
-          id: g.id,
-          name: g.name,
-          icon: g.icon,
-          unlocked: g.unlocked,
-          unlockCondition: g.unlockCondition,
-        })),
-      })
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load bear profile')
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const [trigger, setTrigger] = useState(0)
 
   useEffect(() => {
-    fetchProfile()
-  }, [fetchProfile])
+    let ignore = false
 
-  return { data, loading, error, refetch: fetchProfile, mutate: setData }
+    const doFetch = async () => {
+      try {
+        const res = await fetch('/api/gamification/profile', {
+          credentials: 'include', // send session cookie
+        })
+
+        if (ignore) return
+
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}))
+          throw new Error(body.error ?? `Server responded with ${res.status}`)
+        }
+
+        const json: ApiResponse = await res.json()
+        if (ignore) return
+
+        setData({
+          submitted: json.submitted,
+          resolved: json.resolved,
+          currentLevel: json.level.current,
+          nextLevelName: json.level.next,
+          nextLevelThreshold: json.level.threshold,
+          gear: json.gear.map((g) => ({
+            id: g.id,
+            name: g.name,
+            icon: g.icon,
+            unlocked: g.unlocked,
+            unlockCondition: g.unlockCondition,
+          })),
+        })
+      } catch (err) {
+        if (!ignore) {
+          setError(err instanceof Error ? err.message : 'Failed to load bear profile')
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false)
+        }
+      }
+    }
+
+    doFetch()
+
+    return () => {
+      ignore = true
+    }
+  }, [trigger])
+
+  const refetch = useCallback(() => {
+    setLoading(true)
+    setError(null)
+    setTrigger(t => t + 1)
+  }, [])
+
+  return { data, loading, error, refetch, mutate: setData }
 }
