@@ -21,6 +21,8 @@ export interface Report {
   sla_deadline?: string | null
   assignee_id?: number | null
   resolution_notes?: string | null
+  ai_assessment?: string | null
+  timeline?: Array<{ label: string; at: string; actor: string }>
   created_at?: string
 }
 
