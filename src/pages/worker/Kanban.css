@@ -96,7 +96,7 @@
   border-radius: 18px;
   padding: 16px;
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
-  cursor: grab;
+  cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
