@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { and, desc, eq } from 'drizzle-orm'
 import { db } from '../db.ts'
 import { reports, report_timeline } from '../schema.ts'
-import { requireAuth, requireResident } from '../middleware.ts'
+import { requireAuth, requireResident, requireWorker } from '../middleware.ts'
 import { refreshBearProgress } from './gamification.ts'
 
 const router = Router()
@@ -14,6 +14,20 @@ function toNumericString(value: unknown): string | null {
   const num = Number(value)
   return Number.isFinite(num) ? String(num) : null
 }
+
+// GET /api/reports/all — all reports for workers
+router.get('/all', requireWorker, async (req, res, next) => {
+  try {
+    const rows = await db
+      .select()
+      .from(reports)
+      .orderBy(desc(reports.created_at))
+
+    res.status(200).json(rows)
+  } catch (err) {
+    next(err)
+  }
+})
 
 // GET /api/reports — the caller's own reports, newest first.
 router.get('/', requireResident, async (req, res, next) => {
