@@ -102,6 +102,7 @@ router.get('/me', requireAuth, async (req, res, next) => {
         full_name: users.full_name,
         email: users.email,
         role: users.role,
+        created_at: users.created_at,
       })
       .from(users)
       .where(eq(users.id, req.session.userId!))

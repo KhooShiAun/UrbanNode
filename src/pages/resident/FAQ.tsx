@@ -55,18 +55,18 @@ const faqData = [
 ];
 
 function FAQ() {
-    const [activeIndex, setActiveIndex] = useState<number | null>(null);
-    const [searchTerm, setSearchTerm] = useState("");
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const toggleFAQ = (index: number) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-    const filteredFaqs = faqData.filter(
+  const filteredFaqs = faqData.filter(
     (faq) =>
-        faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+      faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="faq-container">
@@ -101,10 +101,11 @@ function FAQ() {
 
       <div className="faq-search">
         <input
-        type="text"
-        placeholder="Search frequently asked questions..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+          type="text"
+          placeholder="Search frequently asked questions..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          aria-label="Search frequently asked questions"
         />
       </div>
 
@@ -112,23 +113,27 @@ function FAQ() {
         {filteredFaqs.map((faq, index) => (
           <div
             key={index}
-            className={`faq-card ${
-              activeIndex === index ? "active" : ""
-            }`}
+            className={`faq-card ${activeIndex === index ? "active" : ""}`}
           >
-            <div
+            <button
+              type="button"
               className="faq-question"
               onClick={() => toggleFAQ(index)}
+              aria-expanded={activeIndex === index}
+              aria-controls={`faq-answer-${index}`}
             >
               <h3>{faq.question}</h3>
 
-              <span className="faq-icon">
+              <span className="faq-icon" aria-hidden="true">
                 {activeIndex === index ? "−" : "+"}
               </span>
-            </div>
+            </button>
 
             {activeIndex === index && (
-              <div className="faq-answer">
+              <div
+                id={`faq-answer-${index}`}
+                className="faq-answer"
+              >
                 <p>{faq.answer}</p>
               </div>
             )}

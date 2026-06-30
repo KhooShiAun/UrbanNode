@@ -21,28 +21,45 @@
   gap: 18px; 
 }
 
-/* CARD */
+/* ✅ FIX: <button> reset so notification-card looks identical to the old <div>.
+   Without this, browsers apply default button padding, border, background, and
+   font that break the card's visual design. */
 .notification-card {
+  /* Button reset */
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+
+  /* Card styles (unchanged from original) */
   display: flex;
-  align-items: center; /* same as old */
-  gap: 18px; /* closer to old spacing feel */
-  padding: 20px; /* restored from old (was 16px) */
-  border-radius: 18px; /* smoother like old */
+  align-items: center;
+  gap: 18px;
+  padding: 20px;
+  border-radius: 18px;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: 18px; /* same spacing as old container gap feel */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04); /* restored old depth */
+  margin-bottom: 18px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
 }
 
-/* hover effect (kept but refined) */
 .notification-card:hover {
   transform: translateY(-2px);
+}
+
+/* ✅ FIX: Visible focus ring for keyboard navigation (replaces the browser
+   default which is often invisible on coloured backgrounds). */
+.notification-card:focus-visible {
+  outline: 3px solid #22c55e;
+  outline-offset: 2px;
 }
 
 /* DONE = GREEN */
 .notification-card.done {
   background: #ecfdf5;
-  border-left: 6px solid #22c55e; /* match old thickness feel */
+  border-left: 6px solid #22c55e;
 }
 
 /* IN PROGRESS = YELLOW */
@@ -57,7 +74,6 @@
   border-left: 6px solid #9ca3af;
 }
 
-/* ICON (restored old sizing style) */
 .notification-icon {
   width: 55px;
   height: 55px;
@@ -67,5 +83,59 @@
   justify-content: center;
   align-items: center;
   font-size: 24px;
-  min-width: 55px; /* keeps alignment stable */
+  min-width: 55px;
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notification-content p {
+  margin: 0;
+  color: #22352c;
+  font-size: 15px;
+}
+
+.notification-content small {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* ✅ FIX: Loading state */
+.notifications-loading {
+  color: #6b7280;
+  font-size: 15px;
+  padding: 40px 0;
+  text-align: center;
+}
+
+/* ✅ FIX: Empty state */
+.notifications-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 0;
+  color: #6b7280;
+}
+
+.notifications-empty-icon {
+  font-size: 40px;
+}
+
+.notifications-empty p {
+  margin: 0;
+  font-size: 15px;
+}
+
+/* Error state */
+.notifications-error {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 15px;
 }

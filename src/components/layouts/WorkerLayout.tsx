@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { apiGet, apiSend } from '@/lib/api'
 import { Avatar, Input } from '@/components/ui'
 import { SidebarLayout, type NavItem } from './SidebarLayout'
 import {
@@ -20,11 +22,6 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/worker/notifications', label: 'Notifications', icon: <Bell /> },
 ]
 
-const FOOTER_ITEMS: NavItem[] = [
-  { to: '/worker/profile', label: 'My Profile', icon: <Person /> },
-  { to: '/signin', label: 'Sign Out', icon: <LogOut /> },
-]
-
 function WorkerTopBar({ userName }: { userName: string }) {
   return (
     <>
@@ -41,12 +38,12 @@ function WorkerTopBar({ userName }: { userName: string }) {
 }
 
 export function WorkerLayout() {
+  const navigate = useNavigate()
   const [userName, setUserName] = useState<string>('Ahmad bin Ali')
 
   useEffect(() => {
     let active = true
-    fetch('/api/auth/me', { credentials: 'include' })
-      .then((res) => (res.ok ? res.json() : null))
+    apiGet<{ full_name?: string }>('/api/auth/me')
       .then((data) => {
         if (active && data?.full_name) {
           setUserName(data.full_name)
@@ -58,12 +55,28 @@ export function WorkerLayout() {
     }
   }, [])
 
+  const handleSignOut = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    try {
+      await apiSend('/api/auth/signout', 'POST')
+    } catch (err) {
+      console.error('Sign out failed:', err)
+    }
+    navigate('/signin')
+  }
+
+  const footerItems: NavItem[] = [
+    { to: '/worker/profile', label: 'My Profile', icon: <Person /> },
+    { to: '/signin', label: 'Sign Out', icon: <LogOut />, onClick: handleSignOut },
+  ]
+
   return (
     <SidebarLayout
       navItems={NAV_ITEMS}
-      footerItems={FOOTER_ITEMS}
+      footerItems={footerItems}
       topBar={<WorkerTopBar userName={userName} />}
       variantClass="un-shell--worker"
     />
   )
 }
+

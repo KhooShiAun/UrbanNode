@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui'
+import { apiSend } from '@/lib/api'
 import { CommunityBearProfile, LevelUpOverlay, type GearItem } from '@/components/community-bear'
 import { useBearProfile, type BearProfileData } from '@/hooks/useBearProfile'
 import './CommunityBearPage.css'
@@ -119,7 +120,7 @@ export function CommunityBearPage() {
           size="sm" 
           onClick={() => {
             mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: prev.submitted + 10 } : null);
-            fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_submitted' }) })
+            apiSend('/api/gamification/dev-update', 'POST', { action: 'add_submitted' })
               .then(() => refetch());
           }}
         >
@@ -130,7 +131,7 @@ export function CommunityBearPage() {
           size="sm" 
           onClick={() => {
             mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: prev.submitted + 10, resolved: prev.resolved + 10 } : null);
-            fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_resolved' }) })
+            apiSend('/api/gamification/dev-update', 'POST', { action: 'add_resolved' })
               .then(() => refetch());
           }}
         >
@@ -142,7 +143,7 @@ export function CommunityBearPage() {
           style={{ color: 'var(--color-error)' }}
           onClick={() => {
             mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: 0, resolved: 0, currentLevel: 'Bronze', gear: prev.gear.map((g: GearItem) => ({ ...g, unlocked: false })) } : null);
-            fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'reset' }) })
+            apiSend('/api/gamification/dev-update', 'POST', { action: 'reset' })
               .then(() => refetch());
           }}
         >
