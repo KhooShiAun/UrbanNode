@@ -47,9 +47,10 @@ export function useBearProfile(): UseBearProfileResult {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchProfile = useCallback(async () => {
-    setLoading(true)
-    setError(null)
+  const [trigger, setTrigger] = useState(0)
+
+  useEffect(() => {
+    let ignore = false
 
     try {
       const json = await apiGet<ApiResponse>('/api/gamification/profile')
@@ -73,11 +74,13 @@ export function useBearProfile(): UseBearProfileResult {
     } finally {
       setLoading(false)
     }
+  }, [trigger])
+
+  const refetch = useCallback(() => {
+    setLoading(true)
+    setError(null)
+    setTrigger(t => t + 1)
   }, [])
 
-  useEffect(() => {
-    fetchProfile()
-  }, [fetchProfile])
-
-  return { data, loading, error, refetch: fetchProfile, mutate: setData }
+  return { data, loading, error, refetch, mutate: setData }
 }

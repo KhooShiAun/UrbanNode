@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui'
 import { apiSend } from '@/lib/api'
 import { CommunityBearProfile, LevelUpOverlay, type GearItem } from '@/components/community-bear'
@@ -11,18 +12,18 @@ export function CommunityBearPage() {
   const { data, loading, error, refetch, mutate } = useBearProfile()
 
   // State for level-up overlay
-  const [prevLevel, setPrevLevel] = useState<string | null>(null)
+  const prevLevelRef = useRef<string | null>(null)
   const [showLevelUp, setShowLevelUp] = useState(false)
 
   // Detect level-ups when data changes (e.g. after refetch)
   useEffect(() => {
     if (!data) return
 
-    if (prevLevel && prevLevel !== data.currentLevel) {
+    if (prevLevelRef.current && prevLevelRef.current !== data.currentLevel) {
       setShowLevelUp(true)
     }
-    setPrevLevel(data.currentLevel)
-  }, [data, prevLevel])
+    prevLevelRef.current = data.currentLevel
+  }, [data])
 
   // ── Loading state ──────────────────────────────────────────────────
 
