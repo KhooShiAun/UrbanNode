@@ -1,5 +1,6 @@
 import { useRef, useState, type ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { apiSend } from '@/lib/api'
 import { Button, Card, Input, Stepper, TextArea, useToast } from '@/components/ui'
 import { ArrowLeft, ArrowRight, Camera, Check, MapPin, X } from '@/components/icons'
 import './ReportNew.css'
@@ -126,29 +127,18 @@ export function ReportNew() {
 
     setSubmitting(true)
     try {
-      const res = await fetch('/api/reports', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          description: description.trim(),
-          location_text: locationText.trim(),
-          location_lat: lat,
-          location_lng: lng,
-          photo_url: photoDataUrl,
-        }),
+      await apiSend('/api/reports', 'POST', {
+        description: description.trim(),
+        location_text: locationText.trim(),
+        location_lat: lat,
+        location_lng: lng,
+        photo_url: photoDataUrl,
       })
-      const data = await res.json().catch(() => ({}))
-
-      if (!res.ok) {
-        showToast(data.error ?? 'Unable to submit your report. Please try again.', 'error')
-        return
-      }
 
       showToast('Report submitted. Thank you for helping out!', 'success')
       navigate('/reports')
-    } catch {
-      showToast('Network error. Please check your connection and try again.', 'error')
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Network error. Please check your connection and try again.', 'error')
     } finally {
       setSubmitting(false)
     }
@@ -210,6 +200,7 @@ export function ReportNew() {
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
+                aria-label="Upload a photo"
                 className="report-new__file-input"
                 onChange={handlePhotoChange}
               />

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { apiGet } from '@/lib/api'
 import { Badge, Button, Card, EmptyState, Spinner, useToast } from '@/components/ui'
 import { AlertCircle, ArrowLeft, Clock, MapPin } from '@/components/icons'
-import { buildReportDetail, type Report } from './reportDetail.mock'
+import { type Report } from './reportDetail.mock'
 import { ReportTimeline } from './ReportTimeline'
 import { formatCode, formatDateTime, severityBadge, slaRemaining, statusBadge } from './reportFormat'
 import './ReportDetail.css'
@@ -27,18 +28,12 @@ export function ReportDetail() {
 
     async function load() {
       try {
-        const res = await fetch(`/api/reports/${id}`, { credentials: 'include' })
-        if (res.status === 404) {
-          if (!cancelled) setNotFound(true)
-          return
-        }
-        if (!res.ok) throw new Error('Failed to load report')
-        const data: Report = await res.json()
+        const data = await apiGet<Report>(`/api/reports/${id}`)
         if (!cancelled) setReport(data)
-      } catch {
+      } catch (err) {
         if (!cancelled) {
           setNotFound(true)
-          showToast('Could not load this report. Please try again.', 'error')
+          showToast(err instanceof Error ? err.message : 'Could not load this report. Please try again.', 'error')
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -51,7 +46,19 @@ export function ReportDetail() {
     }
   }, [id, showToast])
 
-  const detail = useMemo(() => (report ? buildReportDetail(report) : null), [report])
+  const detail = useMemo(() => {
+    if (!report) return null
+    const aiAssessment =
+      report.severity === 'urgent' ? 'High risk to public safety'
+      : report.severity === 'routine' ? 'Moderate risk — schedule routine repair'
+      : report.severity === 'low' ? 'Low risk — monitor and address when convenient'
+      : 'Pending assessment'
+    return {
+      aiAssessment,
+      slaDeadline: report.sla_deadline,
+      timeline: report.timeline || [],
+    }
+  }, [report])
 
   function backToList() {
     navigate('/reports')

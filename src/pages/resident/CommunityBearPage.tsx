@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
+
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui'
-import { CommunityBearProfile, LevelUpOverlay } from '@/components/community-bear'
-import { useBearProfile } from '@/hooks/useBearProfile'
+import { apiSend } from '@/lib/api'
+import { CommunityBearProfile, LevelUpOverlay, type GearItem } from '@/components/community-bear'
+import { useBearProfile, type BearProfileData } from '@/hooks/useBearProfile'
 import './CommunityBearPage.css'
 
 // ── Page component ───────────────────────────────────────────────────
@@ -10,18 +12,18 @@ export function CommunityBearPage() {
   const { data, loading, error, refetch, mutate } = useBearProfile()
 
   // State for level-up overlay
-  const [prevLevel, setPrevLevel] = useState<string | null>(null)
+  const prevLevelRef = useRef<string | null>(null)
   const [showLevelUp, setShowLevelUp] = useState(false)
 
   // Detect level-ups when data changes (e.g. after refetch)
   useEffect(() => {
     if (!data) return
 
-    if (prevLevel && prevLevel !== data.currentLevel) {
+    if (prevLevelRef.current && prevLevelRef.current !== data.currentLevel) {
       setShowLevelUp(true)
     }
-    setPrevLevel(data.currentLevel)
-  }, [data, prevLevel])
+    prevLevelRef.current = data.currentLevel
+  }, [data])
 
   // ── Loading state ──────────────────────────────────────────────────
 
@@ -118,8 +120,8 @@ export function CommunityBearPage() {
           variant="secondary" 
           size="sm" 
           onClick={() => {
-            mutate(prev => prev ? { ...prev, submitted: prev.submitted + 10 } : null);
-            fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_submitted' }) })
+            mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: prev.submitted + 10 } : null);
+            apiSend('/api/gamification/dev-update', 'POST', { action: 'add_submitted' })
               .then(() => refetch());
           }}
         >
@@ -129,8 +131,8 @@ export function CommunityBearPage() {
           variant="secondary" 
           size="sm" 
           onClick={() => {
-            mutate(prev => prev ? { ...prev, submitted: prev.submitted + 10, resolved: prev.resolved + 10 } : null);
-            fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_resolved' }) })
+            mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: prev.submitted + 10, resolved: prev.resolved + 10 } : null);
+            apiSend('/api/gamification/dev-update', 'POST', { action: 'add_resolved' })
               .then(() => refetch());
           }}
         >
@@ -141,8 +143,8 @@ export function CommunityBearPage() {
           size="sm" 
           style={{ color: 'var(--color-error)' }}
           onClick={() => {
-            mutate(prev => prev ? { ...prev, submitted: 0, resolved: 0, currentLevel: 'Bronze', gear: prev.gear.map(g => ({ ...g, unlocked: false })) } : null);
-            fetch('/api/gamification/dev-update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'reset' }) })
+            mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: 0, resolved: 0, currentLevel: 'Bronze', gear: prev.gear.map((g: GearItem) => ({ ...g, unlocked: false })) } : null);
+            apiSend('/api/gamification/dev-update', 'POST', { action: 'reset' })
               .then(() => refetch());
           }}
         >

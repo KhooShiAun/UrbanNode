@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
+import { apiGet } from '@/lib/api'
 import { Spinner } from '@/components/ui'
 
 type AuthState = 'loading' | 'authed' | 'denied'
@@ -19,12 +20,7 @@ const [state, setState] = useState<AuthState>('loading')
 
     async function check() {
       try {
-        const res = await fetch('/api/auth/me', { credentials: 'include' })
-        if (!res.ok) {
-          if (active) setState('denied')
-          return
-        }
-        const user = (await res.json()) as { role?: string }
+        const user = await apiGet<{ role?: string }>('/api/auth/me')
         if (!active) return
         if (requiredRole && user.role !== requiredRole) {
           setState('denied')
