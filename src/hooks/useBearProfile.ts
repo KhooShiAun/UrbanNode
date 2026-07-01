@@ -52,27 +52,40 @@ export function useBearProfile(): UseBearProfileResult {
   useEffect(() => {
     let ignore = false
 
-    try {
-      const json = await apiGet<ApiResponse>('/api/gamification/profile')
+    async function fetchProfile() {
+      try {
+        const json = await apiGet<ApiResponse>('/api/gamification/profile')
+        if (ignore) return
 
-      setData({
-        submitted: json.submitted,
-        resolved: json.resolved,
-        currentLevel: json.level.current,
-        nextLevelName: json.level.next,
-        nextLevelThreshold: json.level.threshold,
-        gear: json.gear.map((g) => ({
-          id: g.id,
-          name: g.name,
-          icon: g.icon,
-          unlocked: g.unlocked,
-          unlockCondition: g.unlockCondition,
-        })),
-      })
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load bear profile')
-    } finally {
-      setLoading(false)
+        setData({
+          submitted: json.submitted,
+          resolved: json.resolved,
+          currentLevel: json.level.current,
+          nextLevelName: json.level.next,
+          nextLevelThreshold: json.level.threshold,
+          gear: json.gear.map((g) => ({
+            id: g.id,
+            name: g.name,
+            icon: g.icon,
+            unlocked: g.unlocked,
+            unlockCondition: g.unlockCondition,
+          })),
+        })
+      } catch (err) {
+        if (!ignore) {
+          setError(err instanceof Error ? err.message : 'Failed to load bear profile')
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false)
+        }
+      }
+    }
+
+    fetchProfile()
+
+    return () => {
+      ignore = true
     }
   }, [trigger])
 

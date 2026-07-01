@@ -1,0 +1,200 @@
+.un-reports-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding-bottom: var(--space-xl);
+}
+
+.un-reports-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.un-reports-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-on-surface);
+  margin: 0;
+  display: none; /* Hide if the layout already has it, else remove this. Wait, PlaceholderPage shows it. */
+}
+
+/* We'll show the title as in the mockup, but the mockup has it aligned with the search bar. */
+/* If we can't change the layout, we just put it here. Let's assume it's part of the page content. */
+
+.un-reports-filters {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+/* Override the active tag color for this page to match the requested light grey */
+.un-reports-filters .un-tag--active {
+  background-color: #E8E8E6;
+  border-color: #E8E8E6;
+  color: var(--color-on-surface);
+}
+
+.un-reports-filters .un-tag--active:hover {
+  background-color: #E8E8E6;
+  border-color: #E8E8E6;
+}
+
+.un-reports-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.un-reports-table-wrapper {
+  overflow-x: auto;
+}
+
+.un-reports-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.un-reports-table th {
+  padding: 16px var(--space-md);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+  border-bottom: 1px solid var(--color-outline-variant);
+  white-space: nowrap;
+}
+
+.un-reports-table td {
+  padding: 16px var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+  border-bottom: 1px solid var(--color-outline-variant);
+  vertical-align: middle;
+}
+
+.un-reports-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.un-reports-table tbody tr:hover {
+  background-color: var(--color-surface-container-low);
+}
+
+.un-reports-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.un-reports-id {
+  color: #B28236; /* yellowish/gold color from the mockup */
+  font-weight: var(--weight-medium);
+}
+
+.un-reports-location {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.un-reports-deadline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-error);
+  font-weight: var(--weight-medium);
+}
+
+.un-reports-deadline-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.un-reports-assignee {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-on-surface-variant);
+}
+
+.un-reports-assignee .un-avatar {
+  background: var(--color-status-uncategorised-bg);
+  color: var(--color-status-uncategorised-fg);
+  width: 24px;
+  height: 24px;
+}
+
+.un-reports-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px var(--space-md);
+  border-top: 1px solid var(--color-outline-variant);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+  background: var(--color-surface-container-lowest);
+}
+
+.un-reports-footer-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.un-reports-rows-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.un-reports-pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.un-reports-page-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-on-surface);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  transition: all 0.15s;
+}
+
+.un-reports-page-btn:hover:not(:disabled) {
+  background: var(--color-surface-container-low);
+}
+
+.un-reports-page-btn--active {
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  border-color: var(--color-primary);
+}
+
+.un-reports-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Custom badge for open status */
+.un-badge--open {
+  background: var(--color-status-uncategorised-bg);
+  color: var(--color-status-uncategorised-fg);
+}
+
+.sortable-col {
+  cursor: pointer;
+  user-select: none;
+}

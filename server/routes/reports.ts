@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { and, desc, eq, or, ilike, isNull, asc, sql } from 'drizzle-orm'
 import { db } from '../db.ts'
 import { reports, report_timeline, users } from '../schema.ts'
-import { requireAuth, requireResident } from '../middleware.ts'
+import { requireAuth, requireResident, requireWorker } from '../middleware.ts'
 import { refreshBearProgress } from './gamification.ts'
 
 const router = Router()
@@ -14,6 +14,20 @@ function toNumericString(value: unknown): string | null {
   const num = Number(value)
   return Number.isFinite(num) ? String(num) : null
 }
+
+// GET /api/reports/all — all reports for workers
+router.get('/all', requireWorker, async (_req, res, next) => {
+  try {
+    const rows = await db
+      .select()
+      .from(reports)
+      .orderBy(desc(reports.created_at))
+
+    res.status(200).json(rows)
+  } catch (err) {
+    next(err)
+  }
+})
 
 // GET /api/reports — retrieve reports (filtered/paginated for workers, owned-only for residents)
 router.get('/', requireAuth, async (req, res, next) => {
@@ -112,7 +126,7 @@ router.get('/', requireAuth, async (req, res, next) => {
 })
 
 // GET /api/reports/statuses - list all valid status keys and labels
-router.get('/statuses', requireAuth, async (req, res, next) => {
+router.get('/statuses', requireAuth, async (_req, res, next) => {
   try {
     const list = [
       { id: 'new', label: 'Submitted' },
