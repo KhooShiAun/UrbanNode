@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Avatar } from '@/components/ui'
 import './Kanban.css'
 
@@ -64,6 +65,7 @@ function getSlaLabel(slaDeadline: string | null) {
 }
 
 export function Kanban() {
+  const navigate = useNavigate()
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -212,6 +214,7 @@ export function Kanban() {
                       className="kanban-card"
                       draggable
                       onDragStart={() => handleDragStart(report.id)}
+                      onClick={() => navigate(`/worker/tickets/${report.id}`)}
                     >
                       <div className="kanban-card-top">
                         <span
@@ -246,12 +249,15 @@ export function Kanban() {
                         </div>
 
                         {report.status === 'uncategorised' && (
-                          <a
+                          <span
                             className="categorise-link"
-                            href={`/worker/tickets/${report.id}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/worker/tickets/${report.id}`);
+                            }}
                           >
                             Categorise
-                          </a>
+                          </span>
                         )}
                       </div>
                     </article>

@@ -111,6 +111,21 @@ router.get('/', requireAuth, async (req, res, next) => {
   }
 })
 
+// GET /api/reports/statuses - list all valid status keys and labels
+router.get('/statuses', requireAuth, async (req, res, next) => {
+  try {
+    const list = [
+      { id: 'new', label: 'Submitted' },
+      { id: 'in_progress', label: 'In Progress' },
+      { id: 'resolved', label: 'Resolved' },
+      { id: 'uncategorised', label: 'Pending Triage' }
+    ]
+    res.status(200).json(list)
+  } catch (err) {
+    next(err)
+  }
+})
+
 // GET /api/reports/:id — retrieve a single report (owned-only for residents, any for workers)
 router.get('/:id', requireAuth, async (req, res, next) => {
   try {
@@ -162,8 +177,24 @@ router.get('/:id', requireAuth, async (req, res, next) => {
       }
     })
 
+    let ai_assessment = 'Pending assessment'
+    if (report.severity === 'urgent') {
+      if (report.description.toLowerCase().includes('children') ||
+          report.description.toLowerCase().includes('playground') ||
+          report.description.toLowerCase().includes('swing')) {
+        ai_assessment = 'High risk to children - immediate attention required'
+      } else {
+        ai_assessment = 'High risk to public safety - immediate attention required'
+      }
+    } else if (report.severity === 'routine') {
+      ai_assessment = 'Moderate risk — schedule routine repair'
+    } else if (report.severity === 'low') {
+      ai_assessment = 'Low risk — monitor and address when convenient'
+    }
+
     res.status(200).json({
       ...report,
+      ai_assessment,
       timeline,
     })
   } catch (err) {
