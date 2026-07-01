@@ -1,0 +1,71 @@
+.notifications-page { 
+  padding: 30px; 
+  width: 100%; 
+  min-height: 100vh; 
+  background: #f7f9f8; 
+} 
+
+.notifications-header { 
+  margin-bottom: 25px; 
+} 
+
+.notifications-header h1 { 
+  font-size: 32px; 
+  color: #22352c; 
+  font-weight: 700; 
+} 
+
+.notifications-container { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 18px; 
+}
+
+/* CARD */
+.notification-card {
+  display: flex;
+  align-items: center; /* same as old */
+  gap: 18px; /* closer to old spacing feel */
+  padding: 20px; /* restored from old (was 16px) */
+  border-radius: 18px; /* smoother like old */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 18px; /* same spacing as old container gap feel */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04); /* restored old depth */
+}
+
+/* hover effect (kept but refined) */
+.notification-card:hover {
+  transform: translateY(-2px);
+}
+
+/* DONE = GREEN */
+.notification-card.done {
+  background: #ecfdf5;
+  border-left: 6px solid #22c55e; /* match old thickness feel */
+}
+
+/* IN PROGRESS = YELLOW */
+.notification-card.in-progress {
+  background: #fffbeb;
+  border-left: 6px solid #f59e0b;
+}
+
+/* READ = GREY */
+.notification-card.read {
+  background: #f3f4f6;
+  border-left: 6px solid #9ca3af;
+}
+
+/* ICON (restored old sizing style) */
+.notification-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #f3f5f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  min-width: 55px; /* keeps alignment stable */
+}
