@@ -4,6 +4,8 @@ import { db } from '../db.ts'
 import { reports, report_timeline, users } from '../schema.ts'
 import { requireAuth, requireResident, requireWorker } from '../middleware.ts'
 import { refreshBearProgress } from './gamification.ts'
+import { classifyReport } from '../utils/ai.ts'
+import { calculateDeadline } from '../utils/deadline.ts'
 
 const router = Router()
 
@@ -221,18 +223,22 @@ router.get('/:id', requireAuth, async (req, res, next) => {
 router.post('/', requireResident, async (req, res, next) => {
   try {
     const userId = req.session.userId!
-    const { description, location_text, location_lat, location_lng, photo_url, severity } =
+    const { description, location_text, location_lat, location_lng, photo_url } =
       req.body ?? {}
 
     if (typeof description !== 'string' || !description.trim()) {
       return res.status(400).json({ error: 'A description is required' })
     }
 
+    const cleanDescription = description.trim()
+    const resolvedSeverity = await classifyReport(cleanDescription)
+    const slaDeadline = calculateDeadline(resolvedSeverity)
+
     const [report] = await db
       .insert(reports)
       .values({
         user_id: userId,
-        description: description.trim(),
+        description: cleanDescription,
         location_text:
           typeof location_text === 'string' && location_text.trim()
             ? location_text.trim()
@@ -240,7 +246,8 @@ router.post('/', requireResident, async (req, res, next) => {
         location_lat: toNumericString(location_lat),
         location_lng: toNumericString(location_lng),
         photo_url: typeof photo_url === 'string' && photo_url ? photo_url : null,
-        severity: severity ?? 'uncategorised',
+        severity: resolvedSeverity,
+        sla_deadline: slaDeadline,
       })
       .returning()
 
