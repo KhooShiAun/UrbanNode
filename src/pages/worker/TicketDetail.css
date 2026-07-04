@@ -128,19 +128,24 @@
 .ticket-map {
   position: relative;
   height: 240px;
-  background: #f1ebd9; /* Beige map color */
   border: 1px solid var(--color-outline-variant);
   border-radius: var(--radius);
+  display: block;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.ticket-map--no-coords {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: var(--space-md);
   text-align: center;
-  overflow: hidden;
+  background: #f1ebd9; /* Beige map color */
 }
 
-.ticket-map::before {
+.ticket-map--no-coords::before {
   content: '';
   position: absolute;
   inset: 0;

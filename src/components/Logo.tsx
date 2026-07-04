@@ -3,23 +3,47 @@ type LogoProps = {
 }
 
 export function Logo({ variant = 'dark' }: LogoProps) {
-  const wordmarkColor = variant === 'light' ? '#ffffff' : 'var(--color-on-surface)'
+  const isLight = variant === 'light'
+  const wordmarkColor = isLight ? '#ffffff' : '#145c3d'
+  
+  const circleBg = isLight ? '#ffffff' : '#145c3d'
+  const letterColor = isLight ? '#145c3d' : '#ffffff'
+
+  const size = isLight ? '48px' : '36px'
+  const fontSize = isLight ? '24px' : '18px'
 
   return (
-    <div className="logo">
-      <span className="logo-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="22" height="22">
-          <path
-            fill="var(--color-primary)"
-            d="M12 2.5c-3.6 0-6.5 2.9-6.5 6.5 0 4.6 5.6 11.4 6 11.9.3.3.7.3 1 0 .4-.5 6-7.3 6-11.9 0-3.6-2.9-6.5-6.5-6.5Z"
-          />
-          <path
-            fill="#ffffff"
-            d="M12 6.5c-1 1.4-1.6 2.7-1.6 4 0 1.4.7 2.3 1.6 2.3.9 0 1.6-.9 1.6-2.3 0-1.3-.6-2.6-1.6-4Z"
-          />
-        </svg>
+    <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <span
+        className="logo-mark"
+        aria-hidden="true"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '50%',
+          width: size,
+          height: size,
+          backgroundColor: circleBg,
+          color: letterColor,
+          fontWeight: 700,
+          fontSize: fontSize,
+          lineHeight: 1,
+          fontFamily: 'var(--font-sans)',
+          transition: 'all 0.15s ease',
+          flexShrink: 0,
+        }}
+      >
+        U
       </span>
-      <span className="logo-word" style={{ color: wordmarkColor }}>
+      <span
+        className="logo-word"
+        style={{
+          color: wordmarkColor,
+          fontWeight: 700,
+          fontFamily: 'var(--font-sans)',
+        }}
+      >
         UrbanNode
       </span>
     </div>
