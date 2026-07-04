@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useRef, useState, useEffect, type ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiSend } from '@/lib/api'
 import { Button, Card, Input, Stepper, TextArea, useToast } from '@/components/ui'
@@ -25,6 +25,9 @@ export function ReportNew() {
   const navigate = useNavigate()
   const { showToast } = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const mapContainerRef = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<any>(null)
+  const markerRef = useRef<any>(null)
 
   const [step, setStep] = useState(0)
   const [description, setDescription] = useState('')
@@ -76,14 +79,88 @@ export function ReportNew() {
     setGeoStatus('loading')
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setLat(pos.coords.latitude)
-        setLng(pos.coords.longitude)
+        const currentLat = pos.coords.latitude
+        const currentLng = pos.coords.longitude
+        setLat(currentLat)
+        setLng(currentLng)
         setGeoStatus('success')
+
+        if (mapRef.current) {
+          mapRef.current.setView([currentLat, currentLng], 15)
+          if (markerRef.current) {
+            markerRef.current.setLatLng([currentLat, currentLng])
+          } else {
+            const marker = L.marker([currentLat, currentLng], { draggable: true }).addTo(mapRef.current)
+            markerRef.current = marker
+            marker.on('dragend', () => {
+              const position = marker.getLatLng()
+              setLat(position.lat)
+              setLng(position.lng)
+            })
+          }
+        }
       },
       () => setGeoStatus('error'),
       { enableHighAccuracy: true, timeout: 10000 },
     )
   }
+
+  useEffect(() => {
+    if (step !== 1 || !mapContainerRef.current) {
+      if (mapRef.current) {
+        mapRef.current.remove()
+        mapRef.current = null
+        markerRef.current = null
+      }
+      return
+    }
+
+    const defaultLat = lat ?? 3.140853
+    const defaultLng = lng ?? 101.693207
+
+    const map = L.map(mapContainerRef.current).setView([defaultLat, defaultLng], 14)
+    mapRef.current = map
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map)
+
+    if (lat !== null && lng !== null) {
+      const marker = L.marker([lat, lng], { draggable: true }).addTo(map)
+      markerRef.current = marker
+      marker.on('dragend', () => {
+        const position = marker.getLatLng()
+        setLat(position.lat)
+        setLng(position.lng)
+      })
+    }
+
+    map.on('click', (e: any) => {
+      const { lat: clickLat, lng: clickLng } = e.latlng
+      setLat(clickLat)
+      setLng(clickLng)
+      
+      if (markerRef.current) {
+        markerRef.current.setLatLng([clickLat, clickLng])
+      } else {
+        const marker = L.marker([clickLat, clickLng], { draggable: true }).addTo(map)
+        markerRef.current = marker
+        marker.on('dragend', () => {
+          const position = marker.getLatLng()
+          setLat(position.lat)
+          setLng(position.lng)
+        })
+      }
+    })
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove()
+        mapRef.current = null
+        markerRef.current = null
+      }
+    }
+  }, [step])
 
   function validateStep(target: number): boolean {
     const next: Errors = {}
@@ -247,6 +324,8 @@ export function ReportNew() {
                 </span>
               )}
             </div>
+
+            <div className="report-new__map-container" ref={mapContainerRef} />
           </div>
         )}
 

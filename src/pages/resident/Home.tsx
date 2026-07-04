@@ -8,15 +8,18 @@ import {
   AlertTriangle,
   Lightbulb,
   Paintbrush,
+  ChevronRight,
+  Check,
+  RefreshCw,
 } from "lucide-react";
 
 import "./Home.css";
 
 type Report = {
   id: number;
-  title: string;
+  description: string;
   status: string;
-  category?: string;
+  severity: string;
   created_at?: string;
 };
 
@@ -99,11 +102,12 @@ export function Home() {
 
   const recentReports = reports.slice(0, 3);
 
-  function getReportIcon(category?: string) {
-    const value = category?.toLowerCase() ?? "";
+  // Helper to determine icon from description
+  function getReportIcon(description: string) {
+    const value = description.toLowerCase();
 
-    if (value.includes("light")) return Lightbulb;
-    if (value.includes("graffiti")) return Paintbrush;
+    if (value.includes("light") || value.includes("lamp") || value.includes("dark")) return Lightbulb;
+    if (value.includes("graffiti") || value.includes("paint")) return Paintbrush;
 
     return AlertTriangle;
   }
@@ -118,6 +122,7 @@ export function Home() {
     })}`;
   }
 
+  // Exact mockup statuses to display
   function formatStatus(status: string) {
     if (status === "in_progress" || status === "pending") return "In Progress";
     if (status === "resolved" || status === "completed") return "Resolved";
@@ -154,7 +159,7 @@ export function Home() {
                 </div>
               </div>
 
-              <h2>{item.value}</h2>
+              <h2 className={`stat-value ${item.id}`}>{item.value}</h2>
             </div>
           );
         })}
@@ -173,19 +178,18 @@ export function Home() {
         <div className="report-list">
           {recentReports.length > 0 ? (
             recentReports.map((report) => {
-              const Icon = getReportIcon(report.category);
+              const Icon = getReportIcon(report.description);
               const statusText = formatStatus(report.status);
 
               return (
-                // ⚪ FIXED: Using report.id instead of .title for stable React keys
                 <div key={report.id} className="report-item">
                   <div className="report-left">
                     <div className="report-icon">
                       <Icon size={22} />
                     </div>
 
-                    <div>
-                      <h3>{report.title}</h3>
+                    <div className="report-details">
+                      <h3>{report.description.length > 40 ? report.description.slice(0, 40) + "..." : report.description}</h3>
                       <p>{formatReportDate(report.created_at)}</p>
                     </div>
                   </div>
@@ -198,8 +202,19 @@ export function Home() {
                           : "status-progress"
                       }
                     >
-                      {statusText}
+                      {statusText === "Resolved" ? (
+                        <>
+                          <Check size={14} className="badge-icon" />
+                          <span>Resolved</span>
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw size={12} className="badge-icon" />
+                          <span>In Progress</span>
+                        </>
+                      )}
                     </span>
+                    <ChevronRight size={20} className="report-chevron" />
                   </div>
                 </div>
               );

@@ -15,7 +15,7 @@ import {
 const NAV_ITEMS: NavItem[] = [
   { to: '/home', label: 'Home', icon: <Home /> },
   { to: '/reports', label: 'My Reports', icon: <Clipboard /> },
-  { to: '/community', label: 'Community Bear', icon: <Users /> },
+  { to: '/community', label: 'Community Board', icon: <Users /> },
   { to: '/notifications', label: 'Notifications', icon: <Bell /> },
 ]
 
@@ -49,6 +49,11 @@ export function ResidentLayout() {
       navItems={NAV_ITEMS}
       footerItems={footerItems}
       cta={CTA}
+      topBar={
+        <button className="profile-btn" aria-label="Profile" onClick={() => navigate('/profile')}>
+          <Person size={20} />
+        </button>
+      }
       variantClass="un-shell--resident"
     />
   )

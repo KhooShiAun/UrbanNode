@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { apiGet } from '@/lib/api'
 import { Badge, Button, Card, EmptyState, Spinner, useToast } from '@/components/ui'
@@ -23,6 +23,9 @@ export function ReportDetail() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
+  const mapContainerRef = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<any>(null)
+
   useEffect(() => {
     let cancelled = false
 
@@ -45,6 +48,37 @@ export function ReportDetail() {
       cancelled = true
     }
   }, [id, showToast])
+
+  const hasValidCoords = report?.location_lat !== null && report?.location_lat !== undefined && report?.location_lat !== '' && report?.location_lng !== null && report?.location_lng !== undefined && report?.location_lng !== ''
+
+  useEffect(() => {
+    if (loading || !report || !mapContainerRef.current || !hasValidCoords) return
+
+    const targetLat = Number(report.location_lat)
+    const targetLng = Number(report.location_lng)
+
+    if (Number.isNaN(targetLat) || Number.isNaN(targetLng)) return
+
+    const map = L.map(mapContainerRef.current, {
+      zoomControl: true,
+      dragging: true,
+      scrollWheelZoom: false,
+    }).setView([targetLat, targetLng], 15)
+    mapRef.current = map
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map)
+
+    L.marker([targetLat, targetLng]).addTo(map)
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove()
+        mapRef.current = null
+      }
+    }
+  }, [loading, report, hasValidCoords])
 
   const detail = useMemo(() => {
     if (!report) return null
@@ -125,17 +159,14 @@ export function ReportDetail() {
               <MapPin size={18} />
               {report.location_text ?? '—'}
             </p>
-            <div className="report-map" role="img" aria-label="Map placeholder">
-              <MapPin size={40} className="report-map__pin" />
-              <span className="report-map__label">Map would display here</span>
-              {hasCoords ? (
-                <span className="report-map__coords">
-                  Coordinates: {lat}, {lng}
-                </span>
-              ) : (
-                <span className="report-map__coords">No coordinates provided</span>
-              )}
-            </div>
+            {hasCoords ? (
+              <div className="report-map" ref={mapContainerRef} />
+            ) : (
+              <div className="report-map report-map--no-coords" role="img" aria-label="No location map">
+                <MapPin size={40} className="report-map__pin" />
+                <span className="report-map__label">No coordinates provided</span>
+              </div>
+            )}
           </Card>
         </div>
 
