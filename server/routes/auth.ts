@@ -35,6 +35,8 @@ router.post('/signup', async (req, res, next) => {
         full_name: users.full_name,
         email: users.email,
         role: users.role,
+        position: users.position,
+        department: users.department,
       })
 
     // Every resident starts a gamification (bear) progress row.
@@ -78,6 +80,8 @@ router.post('/signin', async (req, res, next) => {
       full_name: user.full_name,
       email: user.email,
       role: user.role,
+      position: user.position,
+      department: user.department,
     })
   } catch (err) {
     next(err)
@@ -102,6 +106,8 @@ router.get('/me', requireAuth, async (req, res, next) => {
         full_name: users.full_name,
         email: users.email,
         role: users.role,
+        position: users.position,
+        department: users.department,
         created_at: users.created_at,
       })
       .from(users)
