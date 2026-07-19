@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { apiGet, apiSend } from '@/lib/api'
 import { Button, Spinner, useToast } from '@/components/ui'
 import { Check } from '@/components/icons'
-import { type Report } from '@/types'
+import { type Report, type User } from '@/types'
 
 import { TicketHeader } from './components/TicketHeader'
 import { DescriptionCard } from './components/DescriptionCard'
@@ -32,6 +32,7 @@ export function TicketDetail() {
   const [report, setReport] = useState<Report | null>(null)
   const [workers, setWorkers] = useState<Worker[]>([])
   const [statuses, setStatuses] = useState<StatusOption[]>([])
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -52,12 +53,14 @@ export function TicketDetail() {
       apiGet<Report>(`/api/reports/${id}`),
       apiGet<Worker[]>('/api/users/workers'),
       apiGet<StatusOption[]>('/api/reports/statuses'),
+      apiGet<User>('/api/auth/me'),
     ])
-      .then(([reportData, workersData, statusesData]) => {
+      .then(([reportData, workersData, statusesData, userData]) => {
         if (active) {
           setReport(reportData)
           setWorkers(workersData)
           setStatuses(statusesData)
+          setCurrentUser(userData)
           
           // Initialise form states
           setAssigneeId(reportData.assignee_id ? String(reportData.assignee_id) : '')
@@ -136,6 +139,43 @@ export function TicketDetail() {
     }
   }
 
+  const handleClaim = async () => {
+    if (!currentUser) return
+    setSaving(true)
+    try {
+      await apiSend<Report>(`/api/reports/${id}`, 'PATCH', {
+        assignee_id: currentUser.id,
+      })
+      showToast('You have claimed this ticket', 'success')
+      
+      const updated = await apiGet<Report>(`/api/reports/${id}`)
+      setReport(updated)
+      setAssigneeId(String(currentUser.id))
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Failed to claim ticket.', 'error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleUnclaim = async () => {
+    setSaving(true)
+    try {
+      await apiSend<Report>(`/api/reports/${id}`, 'PATCH', {
+        assignee_id: null,
+      })
+      showToast('Ticket unclaimed successfully', 'success')
+      
+      const updated = await apiGet<Report>(`/api/reports/${id}`)
+      setReport(updated)
+      setAssigneeId('')
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Failed to unclaim ticket.', 'error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="ticket-loading">
@@ -187,7 +227,6 @@ export function TicketDetail() {
 
           <AssigneeStatusForm
             assigneeId={assigneeId}
-            setAssigneeId={setAssigneeId}
             status={status}
             setStatus={setStatus}
             notes={notes}
@@ -196,6 +235,9 @@ export function TicketDetail() {
             statuses={statuses}
             onSave={handleSave}
             loading={saving}
+            currentUserId={currentUser?.id}
+            onClaim={handleClaim}
+            onUnclaim={handleUnclaim}
           />
 
           <TicketTimeline events={report.timeline} />

@@ -11,7 +11,13 @@ type Report = {
   severity: string
   status: string
   sla_deadline: string | null
+  assignee_id: number | null
   created_at: string
+}
+
+interface Worker {
+  id: number
+  full_name: string
 }
 
 export function AllReports() {
@@ -19,23 +25,31 @@ export function AllReports() {
   const { showToast } = useToast()
   const [activeFilter, setActiveFilter] = useState('All')
   const [reports, setReports] = useState<Report[]>([])
+  const [workers, setWorkers] = useState<Worker[]>([])
   const [loading, setLoading] = useState(true)
   const [now] = useState(() => Date.now())
 
   useEffect(() => {
-    async function fetchReports() {
+    async function fetchData() {
       try {
-        const res = await fetch('/api/reports/all')
-        if (!res.ok) throw new Error('Failed to fetch reports')
-        const data = await res.json()
-        setReports(data)
+        const [reportsRes, workersRes] = await Promise.all([
+          fetch('/api/reports/all', { credentials: 'include' }),
+          fetch('/api/users/workers', { credentials: 'include' }),
+        ])
+        if (!reportsRes.ok || !workersRes.ok) {
+          throw new Error('Failed to fetch reports or workers')
+        }
+        const reportsData = await reportsRes.json()
+        const workersData = await workersRes.json()
+        setReports(reportsData)
+        setWorkers(workersData)
       } catch {
         showToast('Error loading reports', 'error')
       } finally {
         setLoading(false)
       }
     }
-    fetchReports()
+    fetchData()
   }, [showToast])
 
   const filteredReports = reports.filter((report) => {
@@ -96,6 +110,12 @@ export function AllReports() {
     const hours = Math.round(ms / (1000 * 60 * 60))
     if (hours < 0) return `${Math.abs(hours)} hrs ago`
     return `in ${hours} hrs`
+  }
+
+  const getWorkerName = (assigneeId?: number | null) => {
+    if (!assigneeId) return 'Unassigned'
+    const worker = workers.find((w) => w.id === assigneeId)
+    return worker ? worker.full_name : 'Unknown Worker'
   }
 
   return (
@@ -179,8 +199,8 @@ export function AllReports() {
                       </td>
                       <td>
                         <div className="un-reports-assignee">
-                          <Avatar name="Unassigned" size="sm" />
-                          <span>Unassigned</span>
+                          <Avatar name={getWorkerName(report.assignee_id)} size="sm" />
+                          <span>{getWorkerName(report.assignee_id)}</span>
                         </div>
                       </td>
                       <td>

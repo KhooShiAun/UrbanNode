@@ -12,7 +12,6 @@ interface StatusOption {
 
 interface AssigneeStatusFormProps {
   assigneeId: string
-  setAssigneeId: (val: string) => void
   status: string
   setStatus: (val: string) => void
   notes: string
@@ -21,11 +20,13 @@ interface AssigneeStatusFormProps {
   statuses: StatusOption[]
   onSave: (e: React.FormEvent) => void
   loading: boolean
+  currentUserId?: number | null
+  onClaim?: () => void
+  onUnclaim?: () => void
 }
 
 export function AssigneeStatusForm({
   assigneeId,
-  setAssigneeId,
   status,
   setStatus,
   notes,
@@ -34,30 +35,63 @@ export function AssigneeStatusForm({
   statuses,
   onSave,
   loading,
+  currentUserId,
+  onClaim,
+  onUnclaim,
 }: AssigneeStatusFormProps) {
+  const getAssigneeName = () => {
+    if (!assigneeId) return 'Unassigned'
+    const worker = workers.find((w) => String(w.id) === assigneeId)
+    return worker ? worker.full_name : 'Unknown Worker'
+  }
+
   return (
     <Card variant="bordered" className="ticket-card ticket-form-card">
       <form onSubmit={onSave} className="ticket-form">
         <div className="ticket-form__field">
-          <label htmlFor="assignee-select" className="ticket-form__label">
+          <span className="ticket-form__label">
             Assignee
-          </label>
-          <div className="ticket-form__select-wrapper">
-            <select
-              id="assignee-select"
-              className="ticket-form__select"
-              value={assigneeId}
-              onChange={(e) => setAssigneeId(e.target.value)}
-              disabled={loading}
-            >
-              <option value="">Unassigned</option>
-              {workers.map((w) => (
-                <option key={w.id} value={String(w.id)}>
-                  {w.full_name}
-                </option>
-              ))}
-            </select>
+          </span>
+          <div
+            className="ticket-form__select"
+            style={{
+              backgroundColor: 'var(--color-surface-container-low)',
+              cursor: 'default',
+              display: 'flex',
+              alignItems: 'center',
+              minHeight: '38px',
+              boxSizing: 'border-box',
+            }}
+          >
+            {getAssigneeName()}
           </div>
+          {currentUserId && (
+            <div style={{ marginTop: '8px' }}>
+              {assigneeId === String(currentUserId) ? (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={onUnclaim}
+                  disabled={loading}
+                  fullWidth
+                >
+                  Unclaim Ticket
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={onClaim}
+                  disabled={loading}
+                  fullWidth
+                >
+                  Claim Ticket
+                </Button>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="ticket-form__field">

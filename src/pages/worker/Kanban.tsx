@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Avatar } from '@/components/ui'
+import { type User } from '@/types'
+import { apiGet, apiSend } from '@/lib/api'
 import './Kanban.css'
 
 type ReportStatus = 'new' | 'in_progress' | 'resolved' | 'uncategorised'
@@ -13,6 +15,12 @@ type Report = {
   severity: ReportSeverity
   status: ReportStatus
   sla_deadline: string | null
+  assignee_id?: number | null
+}
+
+type Worker = {
+  id: number
+  full_name: string
 }
 
 const COLUMNS: {
@@ -67,6 +75,8 @@ function getSlaLabel(slaDeadline: string | null) {
 export function Kanban() {
   const navigate = useNavigate()
   const [reports, setReports] = useState<Report[]>([])
+  const [workers, setWorkers] = useState<Worker[]>([])
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [draggingId, setDraggingId] = useState<number | null>(null)
@@ -74,16 +84,16 @@ export function Kanban() {
   useEffect(() => {
     let active = true
 
-    fetch('/api/reports', { credentials: 'include' })
-      .then(async (res) => {
-        if (!res.ok) {
-          throw new Error('Failed to fetch reports')
-        }
-        return res.json()
-      })
-      .then((data: Report[]) => {
+    Promise.all([
+      apiGet<Report[]>('/api/reports'),
+      apiGet<Worker[]>('/api/users/workers'),
+      apiGet<User>('/api/auth/me'),
+    ])
+      .then(([reportsData, workersData, userData]) => {
         if (!active) return
-        setReports(data)
+        setReports(reportsData)
+        setWorkers(workersData)
+        setCurrentUser(userData)
       })
       .catch(() => {
         if (!active) return
@@ -135,6 +145,39 @@ export function Kanban() {
       setReports(previousReports)
       alert('Failed to update ticket status. Please try again.')
     }
+  }
+
+  const handleClaimTicket = async (reportId: number) => {
+    if (!currentUser) return
+    try {
+      await apiSend<Report>(`/api/reports/${reportId}`, 'PATCH', {
+        assignee_id: currentUser.id,
+      })
+      setReports((current) =>
+        current.map((r) => (r.id === reportId ? { ...r, assignee_id: currentUser.id } : r))
+      )
+    } catch (err) {
+      alert('Failed to claim ticket. Please try again.')
+    }
+  }
+
+  const handleUnclaimTicket = async (reportId: number) => {
+    try {
+      await apiSend<Report>(`/api/reports/${reportId}`, 'PATCH', {
+        assignee_id: null,
+      })
+      setReports((current) =>
+        current.map((r) => (r.id === reportId ? { ...r, assignee_id: null } : r))
+      )
+    } catch (err) {
+      alert('Failed to unclaim ticket. Please try again.')
+    }
+  }
+
+  const getWorkerName = (assigneeId?: number | null) => {
+    if (!assigneeId) return 'Unassigned'
+    const worker = workers.find((w) => w.id === assigneeId)
+    return worker ? worker.full_name : 'Unknown Worker'
   }
 
   const handleDragStart = (reportId: number) => {
@@ -244,21 +287,47 @@ export function Kanban() {
 
                       <div className="kanban-card-footer">
                         <div className="kanban-assignee">
-                          <Avatar name="City Worker" size="sm" />
-                          <span>Assigned Worker</span>
+                          <Avatar name={getWorkerName(report.assignee_id)} size="sm" />
+                          <span>{getWorkerName(report.assignee_id)}</span>
                         </div>
 
-                        {report.status === 'uncategorised' && (
-                          <span
-                            className="categorise-link"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/worker/tickets/${report.id}`);
-                            }}
-                          >
-                            Categorise
-                          </span>
-                        )}
+                        <div className="kanban-card-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          {(!report.assignee_id || report.assignee_id === null) ? (
+                            <span
+                              className="claim-link"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleClaimTicket(report.id);
+                              }}
+                            >
+                              Claim
+                            </span>
+                          ) : (
+                            report.assignee_id === currentUser?.id && (
+                              <span
+                                className="unclaim-link"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleUnclaimTicket(report.id);
+                                }}
+                              >
+                                Unclaim
+                              </span>
+                            )
+                          )}
+
+                          {report.status === 'uncategorised' && (
+                            <span
+                              className="categorise-link"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/worker/tickets/${report.id}`);
+                              }}
+                            >
+                              Categorise
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </article>
                   ))
