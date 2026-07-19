@@ -167,8 +167,11 @@ export function ReportNew() {
     if (target === 0 && !description.trim()) {
       next.description = 'Please describe what you saw.'
     }
-    if (target === 1 && !locationText.trim()) {
-      next.locationText = 'Please tell us where this is.'
+    if (target === 1) {
+      const hasPin = lat !== null && lng !== null
+      if (!hasPin && !locationText.trim()) {
+        next.locationText = 'Please tell us where this is.'
+      }
     }
     setErrors(next)
     return Object.keys(next).length === 0
@@ -196,7 +199,8 @@ export function ReportNew() {
       setErrors({ description: 'Please describe what you saw.' })
       return
     }
-    if (!locationText.trim()) {
+    const hasPin = lat !== null && lng !== null
+    if (!hasPin && !locationText.trim()) {
       setStep(1)
       setErrors({ locationText: 'Please tell us where this is.' })
       return
@@ -301,6 +305,7 @@ export function ReportNew() {
               value={locationText}
               onChange={(e) => setLocationText(e.target.value)}
               error={errors.locationText}
+              helperText={lat !== null && lng !== null ? "Location is optional because you pinned a spot on the map." : undefined}
               iconLeft={<MapPin size={18} />}
             />
 
