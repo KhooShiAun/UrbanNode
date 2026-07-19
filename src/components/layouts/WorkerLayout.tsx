@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { apiGet, apiSend } from '@/lib/api'
 import { Avatar, Input } from '@/components/ui'
 import { SidebarLayout, type NavItem } from './SidebarLayout'
@@ -22,23 +22,29 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/worker/notifications', label: 'Notifications', icon: <Bell /> },
 ]
 
-function WorkerTopBar({ userName }: { userName: string }) {
+function WorkerTopBar({ userName, title }: { userName: string; title: string }) {
   return (
-    <>
-      <div className="un-worker-search">
-        <Input
-          aria-label="Search"
-          placeholder="Search tickets, assets, or locations..."
-          iconLeft={<Search />}
-        />
+    <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
+      <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-on-surface)', margin: 0, whiteSpace: 'nowrap' }}>
+        {title}
+      </h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, justifyContent: 'flex-end' }}>
+        <div className="un-worker-search" style={{ flex: 1, maxWidth: '420px' }}>
+          <Input
+            aria-label="Search"
+            placeholder="Search tickets, assets, or locations..."
+            iconLeft={<Search />}
+          />
+        </div>
+        <Avatar name={userName} size="sm" />
       </div>
-      <Avatar name={userName} size="sm" />
-    </>
+    </div>
   )
 }
 
 export function WorkerLayout() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [userName, setUserName] = useState<string>('Ahmad bin Ali')
 
   useEffect(() => {
@@ -70,11 +76,24 @@ export function WorkerLayout() {
     { to: '/signin', label: 'Sign Out', icon: <LogOut />, onClick: handleSignOut },
   ]
 
+  const getPageTitle = (pathname: string) => {
+    if (pathname.startsWith('/worker/dashboard')) return 'Dashboard'
+    if (pathname.startsWith('/worker/kanban')) return 'Kanban Board'
+    if (pathname.startsWith('/worker/all-reports')) return 'All Reports'
+    if (pathname.startsWith('/worker/uncategorised')) return 'Uncategorised'
+    if (pathname.startsWith('/worker/notifications')) return 'Notifications'
+    if (pathname.startsWith('/worker/profile')) return 'My Profile'
+    if (pathname.startsWith('/worker/tickets/')) return 'Ticket Details'
+    return ''
+  }
+
+  const title = getPageTitle(location.pathname)
+
   return (
     <SidebarLayout
       navItems={NAV_ITEMS}
       footerItems={footerItems}
-      topBar={<WorkerTopBar userName={userName} />}
+      topBar={<WorkerTopBar userName={userName} title={title} />}
       variantClass="un-shell--worker"
     />
   )

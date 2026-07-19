@@ -23,6 +23,10 @@ interface AssigneeStatusFormProps {
   currentUserId?: number | null
   onClaim?: () => void
   onUnclaim?: () => void
+  severity: string
+  setSeverity: (val: string) => void
+  slaDeadline: string
+  setSlaDeadline: (val: string) => void
 }
 
 export function AssigneeStatusForm({
@@ -38,7 +42,31 @@ export function AssigneeStatusForm({
   currentUserId,
   onClaim,
   onUnclaim,
+  severity,
+  setSeverity,
+  slaDeadline,
+  setSlaDeadline,
 }: AssigneeStatusFormProps) {
+  const handleSeverityChange = (newSev: string) => {
+    setSeverity(newSev)
+    const now = new Date()
+    let defaultDeadline: Date | null = null
+    if (newSev === 'urgent') {
+      defaultDeadline = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+    } else if (newSev === 'routine') {
+      defaultDeadline = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000)
+    } else if (newSev === 'low') {
+      defaultDeadline = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+    }
+    
+    if (defaultDeadline) {
+      const offsetMs = defaultDeadline.getTimezoneOffset() * 60000;
+      const localISODate = new Date(defaultDeadline.getTime() - offsetMs).toISOString().slice(0, 16);
+      setSlaDeadline(localISODate)
+    } else {
+      setSlaDeadline('')
+    }
+  }
   const getAssigneeName = () => {
     if (!assigneeId) return 'Unassigned'
     const worker = workers.find((w) => String(w.id) === assigneeId)
@@ -113,6 +141,40 @@ export function AssigneeStatusForm({
               ))}
             </select>
           </div>
+        </div>
+
+        <div className="ticket-form__field">
+          <label htmlFor="severity-select" className="ticket-form__label">
+            Severity
+          </label>
+          <div className="ticket-form__select-wrapper">
+            <select
+              id="severity-select"
+              className="ticket-form__select"
+              value={severity}
+              onChange={(e) => handleSeverityChange(e.target.value)}
+              disabled={loading}
+            >
+              <option value="uncategorised">Uncategorised</option>
+              <option value="low">Low</option>
+              <option value="routine">Routine</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="ticket-form__field">
+          <label htmlFor="sla-deadline-input" className="ticket-form__label">
+            SLA Deadline
+          </label>
+          <input
+            id="sla-deadline-input"
+            type="datetime-local"
+            className="ticket-form__select"
+            value={slaDeadline}
+            onChange={(e) => setSlaDeadline(e.target.value)}
+            disabled={loading}
+          />
         </div>
 
         <div className="ticket-form__field">

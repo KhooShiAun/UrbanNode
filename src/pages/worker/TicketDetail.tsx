@@ -42,6 +42,16 @@ export function TicketDetail() {
   const [assigneeId, setAssigneeId] = useState<string>('')
   const [status, setStatus] = useState<string>('')
   const [notes, setNotes] = useState<string>('')
+  const [severity, setSeverity] = useState<string>('')
+  const [slaDeadline, setSlaDeadline] = useState<string>('')
+
+  const formatForDateTimeInput = (dateString?: string | null) => {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    if (Number.isNaN(date.getTime())) return ''
+    const offsetMs = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16);
+  }
 
   // Initial concurrent load
   useEffect(() => {
@@ -66,6 +76,8 @@ export function TicketDetail() {
           setAssigneeId(reportData.assignee_id ? String(reportData.assignee_id) : '')
           setStatus(reportData.status)
           setNotes(reportData.resolution_notes ?? '')
+          setSeverity(reportData.severity)
+          setSlaDeadline(formatForDateTimeInput(reportData.sla_deadline))
         }
       })
       .catch((err) => {
@@ -90,10 +102,14 @@ export function TicketDetail() {
 
     try {
       const targetAssigneeId = assigneeId === '' ? null : Number(assigneeId)
+      const parsedSla = slaDeadline ? new Date(slaDeadline).toISOString() : null
+
       await apiSend<Report>(`/api/reports/${id}`, 'PATCH', {
         assignee_id: targetAssigneeId,
         status,
         resolution_notes: notes,
+        severity,
+        sla_deadline: parsedSla,
       })
 
       showToast('Changes saved successfully', 'success')
@@ -104,6 +120,8 @@ export function TicketDetail() {
       setAssigneeId(updated.assignee_id ? String(updated.assignee_id) : '')
       setStatus(updated.status)
       setNotes(updated.resolution_notes ?? '')
+      setSeverity(updated.severity)
+      setSlaDeadline(formatForDateTimeInput(updated.sla_deadline))
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Failed to save changes.', 'error')
     } finally {
@@ -132,6 +150,8 @@ export function TicketDetail() {
       setAssigneeId(updated.assignee_id ? String(updated.assignee_id) : '')
       setStatus(updated.status)
       setNotes(updated.resolution_notes ?? '')
+      setSeverity(updated.severity)
+      setSlaDeadline(formatForDateTimeInput(updated.sla_deadline))
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Failed to update resolution status.', 'error')
     } finally {
@@ -238,6 +258,10 @@ export function TicketDetail() {
             currentUserId={currentUser?.id}
             onClaim={handleClaim}
             onUnclaim={handleUnclaim}
+            severity={severity}
+            setSeverity={setSeverity}
+            slaDeadline={slaDeadline}
+            setSlaDeadline={setSlaDeadline}
           />
 
           <TicketTimeline events={report.timeline} />
