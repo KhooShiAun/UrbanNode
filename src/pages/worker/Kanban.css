@@ -1,5 +1,7 @@
 .kanban-page {
-  padding: 32px;
+  padding: 42px 56px 56px 56px;
+  max-width: 100%;
+  margin: 0;
 }
 
 .kanban-header {

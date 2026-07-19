@@ -1,5 +1,7 @@
 .notifications-page { 
-  padding: 30px; 
+  padding: 42px 56px 56px 56px; 
+  max-width: 100%;
+  margin: 0;
   width: 100%; 
   min-height: 100vh; 
   background: #f7f9f8; 

@@ -4,6 +4,7 @@
   gap: var(--space-md);
   max-width: 980px;
   margin: 0 auto;
+  padding: 42px 56px 56px 56px;
 }
 
 .profile__title {
