@@ -20,7 +20,7 @@ export function Uncategorised() {
         if (active) {
           setReports(data)
         }
-      } catch (err) {
+      } catch {
         if (active) {
           showToast('Could not load uncategorised reports.', 'error')
         }
@@ -104,7 +104,6 @@ export function Uncategorised() {
 
               <Button
                 variant="secondary"
-                fullWidth
                 onClick={() => navigate(`/worker/tickets/${report.id}`)}
               >
                 Review & Categorise

@@ -167,7 +167,7 @@ export function AllReports() {
                   return (
                     <tr key={report.id} onClick={() => navigate(`/worker/tickets/${report.id}`)}>
                       <td className="un-reports-id">#REP-{report.id}</td>
-                      <td>{report.description.length > 30 ? report.description.substring(0, 30) + '...' : report.description}</td>
+                      <td>{report.description.length > 60 ? report.description.substring(0, 60) + '...' : report.description}</td>
                       <td className="un-reports-location">
                         <div className="un-reports-location-text">
                           <span style={{ display: 'block' }}>{line1}</span>

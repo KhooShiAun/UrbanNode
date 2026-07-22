@@ -30,20 +30,20 @@
   flex-wrap: wrap;
 }
 
-/* Override the active tag color for this page to match the requested light grey */
+/* Override active tag styles to use brand primary colors */
 .un-reports-filters .un-tag--active {
-  background-color: #E8E8E6;
-  border-color: #E8E8E6;
-  color: var(--color-on-surface);
+  background-color: #a0f4c8;
+  border-color: #a0f4c8;
+  color: #0f5238;
 }
 
 .un-reports-filters .un-tag--active:hover {
-  background-color: #E8E8E6;
-  border-color: #E8E8E6;
+  background-color: #8ceebb;
+  border-color: #8ceebb;
 }
 
 .un-reports-card {
-  background: var(--color-surface);
+  background: var(--color-surface-container-lowest);
   border: 1px solid var(--color-outline-variant);
   border-radius: var(--radius-lg);
   display: flex;
@@ -67,6 +67,7 @@
   font-size: var(--text-sm);
   color: var(--color-on-surface-variant);
   border-bottom: 1px solid var(--color-outline-variant);
+  background-color: var(--color-surface-container-low);
   white-space: nowrap;
 }
 
@@ -92,13 +93,12 @@
 }
 
 .un-reports-id {
-  color: #B28236; /* yellowish/gold color from the mockup */
+  color: var(--color-on-surface-variant);
   font-weight: var(--weight-medium);
 }
 
 .un-reports-location {
-  max-width: 150px;
-  white-space: nowrap;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -180,8 +180,8 @@
 }
 
 .un-reports-page-btn--active {
-  background: var(--color-primary-container);
-  color: var(--color-on-primary-container);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   border-color: var(--color-primary);
 }
 
@@ -199,4 +199,17 @@
 .sortable-col {
   cursor: pointer;
   user-select: none;
+}
+
+@media (max-width: 768px) {
+  .un-reports-page {
+    padding: 24px 20px;
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 600px) {
+  .un-reports-page {
+    padding: 24px 16px;
+  }
 }

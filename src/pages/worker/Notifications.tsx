@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Bell, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 import "./Notifications.css";
 
 interface Notification {
@@ -32,40 +33,49 @@ export const WorkerNotifications: React.FC = () => {
     });
 }, []);
 
+  const getNotificationStatus = (message: string): "urgent" | "in_progress" | "done" | "default" => {
+    const msg = message.toLowerCase();
+    if (msg.includes("urgent") || msg.includes("critical")) return "urgent";
+    if (msg.includes("in progress") || msg.includes("assigned")) return "in_progress";
+    if (msg.includes("resolved") || msg.includes("completed") || msg.includes("thank you")) return "done";
+    return "default";
+  };
+
   const getNotificationStyle = (
-    status: string,
+    message: string,
     isRead: boolean,
   ) => {
     if (isRead) {
       return {
         cardClass: "read",
-        icon: "🔔",
+        icon: <Bell size={24} style={{ color: '#9ca3af' }} />,
       };
     }
 
+    const status = getNotificationStatus(message);
     switch (status) {
       case "done":
         return {
           cardClass: "done",
-          icon: "✔️",
+          icon: <CheckCircle2 size={24} style={{ color: '#10b981' }} />,
         };
 
       case "in_progress":
         return {
           cardClass: "in-progress",
-          icon: "⏱️",
+          icon: <Clock size={24} style={{ color: '#f59e0b' }} />,
         };
 
       case "urgent":
         return {
-          cardClass: "in-urgent",
-          icon: "❗",
+          cardClass: "urgent",
+          icon: <AlertTriangle size={24} style={{ color: '#ef4444' }} />,
         };
 
       default:
         return {
-          cardClass: "read",
-          icon: "🔔",
+          cardClass: "unread-default",
+          icon: <Bell size={24} style={{ color: 'var(--color-outline)' }} />,
         };
     }
   };
@@ -89,10 +99,10 @@ return (
       <p>No notifications yet.</p>
     )}
 
-
+    <div className="notifications-container">
       {notifications.map((notification) => {
         const style = getNotificationStyle(
-          notification.status,
+          notification.message,
           notification.is_read,
         );
 
@@ -107,19 +117,18 @@ return (
             </div>
 
             <div className="notification-content">
-              <h3>{notification.title}</h3>
+              <p className="notification-message">{notification.message}</p>
 
-              <p>{notification.message}</p>
-
-              <small>
+              <span className="notification-time">
                 {new Date(notification.created_at).toLocaleString()}
-              </small>
+              </span>
             </div>
           </div>
         );
       })}
     </div>
-  );
+  </div>
+);
 };
 
 export default WorkerNotifications;

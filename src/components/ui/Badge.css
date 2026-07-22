@@ -51,3 +51,8 @@
   background: var(--color-status-routine-bg);
   color: var(--color-status-routine-fg);
 }
+
+.un-badge--success {
+  background: var(--color-status-resolved-bg);
+  color: var(--color-status-resolved-fg);
+}

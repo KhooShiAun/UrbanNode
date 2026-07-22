@@ -129,7 +129,7 @@ export function WorkerProfile() {
         <Input label="Role / Position" value={user?.position || role} readOnly />
         <Input label="Department" value={user?.department || 'Public Works Department'} readOnly />
         <Input label="Email Address" value={email} onChange={e => setEmail(e.target.value)} />
-        <Button fullWidth onClick={handleSave}>Save Changes</Button>
+        <Button onClick={handleSave}>Save Changes</Button>
       </Card>
 
     </div>
