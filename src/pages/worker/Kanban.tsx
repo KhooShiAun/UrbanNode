@@ -46,14 +46,7 @@ function formatSeverity(severity: ReportSeverity) {
   }
 }
 
-function formatStatus(status: ReportStatus) {
-  switch (status) {
-    case 'in_progress':
-      return 'In Progress'
-    default:
-      return status.charAt(0).toUpperCase() + status.slice(1)
-  }
-}
+
 
 function getSlaLabel(slaDeadline: string | null) {
   if (!slaDeadline) return 'No SLA'
@@ -156,7 +149,7 @@ export function Kanban() {
       setReports((current) =>
         current.map((r) => (r.id === reportId ? { ...r, assignee_id: currentUser.id } : r))
       )
-    } catch (err) {
+    } catch {
       alert('Failed to claim ticket. Please try again.')
     }
   }
@@ -169,7 +162,7 @@ export function Kanban() {
       setReports((current) =>
         current.map((r) => (r.id === reportId ? { ...r, assignee_id: null } : r))
       )
-    } catch (err) {
+    } catch {
       alert('Failed to unclaim ticket. Please try again.')
     }
   }
@@ -264,10 +257,6 @@ export function Kanban() {
                           className={`severity-badge severity-${report.severity}`}
                         >
                           {formatSeverity(report.severity)}
-                        </span>
-
-                        <span className="status-pill">
-                          {formatStatus(report.status)}
                         </span>
                       </div>
 

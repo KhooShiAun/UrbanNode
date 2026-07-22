@@ -5,6 +5,7 @@ import {
   LayoutGrid,
   MapPin,
   Timer,
+  Clipboard,
 } from "lucide-react";
 import "./Dashboard.css";
 
@@ -83,6 +84,7 @@ export function Dashboard() {
     id: "total",
     label: "Total Reports",
     value: totalReports,
+    icon: Clipboard,
   },
   {
     id: "urgent",

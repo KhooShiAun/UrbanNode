@@ -14,13 +14,19 @@
 }
 
 .report-new__card {
-  padding: var(--space-md);
+  padding: var(--space-md) 32px;
 }
 
 .report-new__step {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
+}
+
+.report-new__description-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .report-new__step-head {
@@ -106,16 +112,21 @@
 .report-new__geo-status {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
 }
 
 .report-new__geo-status--ok {
-  color: var(--color-primary);
+  background-color: var(--color-status-resolved-bg);
+  color: var(--color-status-resolved-fg);
 }
 
 .report-new__geo-status--err {
-  color: var(--color-error);
+  background-color: var(--color-status-urgent-bg);
+  color: var(--color-status-urgent-fg);
 }
 
 /* Review */
@@ -130,7 +141,7 @@
   display: grid;
   grid-template-columns: 140px 1fr;
   gap: var(--space-sm);
-  padding: var(--space-sm) 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--color-outline-variant);
 }
 
@@ -188,11 +199,14 @@
   align-items: center;
   gap: var(--space-sm);
   margin-top: var(--space-md);
-  padding-top: var(--space-sm);
+  padding-top: var(--space-md);
   border-top: 1px solid var(--color-outline-variant);
 }
 
 @media (max-width: 640px) {
+  .report-new__card {
+    padding: var(--space-md) var(--space-sm);
+  }
   .report-new__review-row {
     grid-template-columns: 1fr;
     gap: 4px;
@@ -206,4 +220,28 @@
   border: 1px solid var(--color-outline-variant);
   margin-top: var(--space-xs);
   z-index: 1;
+}
+
+/* Custom overrides for Leaflet map controls */
+.report-new__map-container .leaflet-bar {
+  border: 1px solid var(--color-outline-variant) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden;
+}
+
+.report-new__map-container .leaflet-bar a {
+  background-color: var(--color-surface-container-lowest) !important;
+  color: var(--color-on-surface) !important;
+  border-bottom: 1px solid var(--color-outline-variant) !important;
+  transition: background-color 0.15s !important;
+}
+
+.report-new__map-container .leaflet-bar a:hover {
+  background-color: var(--color-surface-container-low) !important;
+  color: var(--color-on-surface) !important;
+}
+
+.report-new__map-container .leaflet-bar a:last-child {
+  border-bottom: none !important;
 }

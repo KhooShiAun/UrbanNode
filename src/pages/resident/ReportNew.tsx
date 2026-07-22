@@ -241,15 +241,17 @@ export function ReportNew() {
               </p>
             </header>
 
-            <TextArea
-              label="Description"
-              placeholder="e.g. There is broken glass near the swing set at Taman Tugu"
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              error={errors.description}
-            />
-            <p className="report-new__counter">{description.length} characters</p>
+            <div className="report-new__description-group">
+              <TextArea
+                label="Description"
+                placeholder="e.g. There is broken glass near the swing set at Taman Tugu"
+                rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                error={errors.description}
+              />
+              <p className="report-new__counter">{description.length} characters</p>
+            </div>
 
             <div className="report-new__photo">
               <span className="report-new__photo-label">Photo (optional)</span>

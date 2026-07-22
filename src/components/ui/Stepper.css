@@ -1,20 +1,20 @@
 .un-stepper {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-sm);
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 60px;
+  position: relative;
+  height: 90px;
 }
 
 .un-stepper__step {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  text-align: center;
-  flex: 0 0 auto;
-  max-width: 160px;
+  position: relative;
+  flex: 0 0 40px;
+  z-index: 2;
 }
 
 .un-stepper__marker {
@@ -40,9 +40,16 @@
 }
 
 .un-stepper__text {
+  position: absolute;
+  top: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  text-align: center;
   display: flex;
   flex-direction: column;
   gap: 2px;
+  pointer-events: none;
 }
 
 .un-stepper__title {
@@ -68,6 +75,7 @@
   min-width: 24px;
   background: var(--color-outline-variant);
   transition: background 0.15s;
+  z-index: 1;
 }
 
 .un-stepper__line--filled {
@@ -75,6 +83,14 @@
 }
 
 @media (max-width: 640px) {
+  .un-stepper {
+    padding: 0 var(--space-sm);
+    height: 76px;
+  }
+  .un-stepper__text {
+    width: 100px;
+    top: 44px;
+  }
   .un-stepper__caption {
     display: none;
   }
