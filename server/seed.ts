@@ -31,16 +31,16 @@ async function main() {
   const insertedUsers = await db
     .insert(users)
     .values([
-      { full_name: 'Sarah Lim', email: 'sarah@demo.com', password_hash, role: 'resident' },
-      { full_name: 'Amir Hassan', email: 'amir@demo.com', password_hash, role: 'resident' },
-      { full_name: 'Ahmad bin Ali', email: 'ahmad@demo.com', password_hash, role: 'worker', position: 'Senior Maintenance Worker', department: 'Public Works Department' },
-      { full_name: 'M. Chen', email: 'chen@demo.com', password_hash, role: 'worker', position: 'Maintenance Worker', department: 'Public Works Department' },
+      { full_name: 'Sarah Lim', email: 'resident1@demo.com', password_hash, role: 'resident' },
+      { full_name: 'Amir Hassan', email: 'resident2@demo.com', password_hash, role: 'resident' },
+      { full_name: 'Ahmad bin Ali', email: 'worker1@demo.com', password_hash, role: 'worker', position: 'Senior Maintenance Worker', department: 'Public Works Department' },
+      { full_name: 'M. Chen', email: 'worker2@demo.com', password_hash, role: 'worker', position: 'Maintenance Worker', department: 'Public Works Department' },
     ])
     .returning({ id: users.id, email: users.email })
 
-  const sarah = insertedUsers.find((u) => u.email === 'sarah@demo.com')!
-  const ahmad = insertedUsers.find((u) => u.email === 'ahmad@demo.com')!
-  const chen = insertedUsers.find((u) => u.email === 'chen@demo.com')!
+  const sarah = insertedUsers.find((u) => u.email === 'resident1@demo.com')!
+  const ahmad = insertedUsers.find((u) => u.email === 'worker1@demo.com')!
+  const chen = insertedUsers.find((u) => u.email === 'worker2@demo.com')!
   console.log(`   → ${insertedUsers.length} users (2 residents, 2 workers)`)
 
   // 3. Gear items (inserted regardless of other data).
@@ -274,8 +274,8 @@ async function main() {
   console.log('   → 5 notifications (3 for resident, 2 for worker)')
 
   console.log('\n✅ Seed complete.')
-  console.log('   Resident login: sarah@demo.com / demo1234')
-  console.log('   Worker login:   ahmad@demo.com / demo1234')
+  console.log('   Resident login: resident1@demo.com / demo1234')
+  console.log('   Worker login:   worker1@demo.com / demo1234')
 }
 
 main()

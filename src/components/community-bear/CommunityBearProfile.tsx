@@ -62,7 +62,7 @@ export function CommunityBearProfile({
       <Card variant="elevated" className="un-community-bear__progress-card">
         <div className="un-community-bear__progress-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>Progress to Next Level</h3>
-          <Badge variant="resolved" style={{ background: '#78c2a4', color: '#1a4f3b' }}>
+          <Badge variant="resolved">
             {resolved} / {nextLevelThreshold} resolved
           </Badge>
         </div>
@@ -84,21 +84,7 @@ export function CommunityBearProfile({
       {/* Bear avatar Card */}
       <Card 
         variant="elevated" 
-        className="un-community-bear__avatar-card" 
-        style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          textAlign: 'center',
-          width: '100%',
-          maxWidth: '777px',
-          height: '309px',
-          borderRadius: '12px',
-          borderWidth: '1px',
-          margin: '0 auto',
-          opacity: 1
-        }}
+        className="un-community-bear__avatar-card"
       >
         <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--color-on-surface)' }}>Your Community Bear</h2>
         <BearAvatar level={currentLevel} style={{ fontSize: '120px', marginBottom: '24px' }} />

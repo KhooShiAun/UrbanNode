@@ -130,6 +130,12 @@
   min-width: 0;
 }
 
+.un-shell--resident .un-shell__topbar-content {
+  max-width: 1088px;
+  margin: 0 auto;
+  width: 100%;
+}
+
 .profile-btn {
   width: 40px;
   height: 40px;

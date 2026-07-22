@@ -8,8 +8,7 @@ export function Profile() {
   const [user, setUser] = useState<{ id: number; full_name: string; email: string; role: string; created_at: string } | null>(null)
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [neighbourhood, setNeighbourhood] = useState('')
+
 
   const toast = useToast()
 
@@ -53,8 +52,7 @@ export function Profile() {
         <h2 className="profile-form__title">Profile Information</h2>
         <Input label="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} />
         <Input label="Email Address" value={email} onChange={e => setEmail(e.target.value)} />
-        <Input label="Phone Number (Optional)" value={phone} onChange={e => setPhone(e.target.value)} />
-        <Input label="Neighbourhood / Area" value={neighbourhood} onChange={e => setNeighbourhood(e.target.value)} />
+
         <Button fullWidth onClick={handleSave}>Save Changes</Button>
       </Card>
 

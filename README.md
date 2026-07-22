@@ -37,11 +37,12 @@ pnpm dev
 
 **Step 5 — Sign in with a demo account**
 
-| Role     | Email          | Password |
-| -------- | -------------- | -------- |
-| Resident | sarah@demo.com | demo1234 |
-| Resident | amir@demo.com  | demo1234 |
-| Worker   | ahmad@demo.com | demo1234 |
+| Role       | Name              | Email              | Password |
+| ---------- | ----------------- | ------------------ | -------- |
+| Resident 1 | Resident Number 1 | resident1@demo.com | demo1234 |
+| Resident 2 | Resident Number 2 | resident2@demo.com | demo1234 |
+| Worker 1   | Worker Number 1   | worker1@demo.com   | demo1234 |
+| Worker 2   | Worker Number 2   | worker2@demo.com   | demo1234 |
 
 ---
 

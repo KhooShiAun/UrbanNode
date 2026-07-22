@@ -1,15 +1,14 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui'
-import { apiSend } from '@/lib/api'
-import { CommunityBearProfile, LevelUpOverlay, type GearItem } from '@/components/community-bear'
-import { useBearProfile, type BearProfileData } from '@/hooks/useBearProfile'
+import { CommunityBearProfile, LevelUpOverlay } from '@/components/community-bear'
+import { useBearProfile } from '@/hooks/useBearProfile'
 import './CommunityBearPage.css'
 
 // ── Page component ───────────────────────────────────────────────────
 
 export function CommunityBearPage() {
-  const { data, loading, error, refetch, mutate } = useBearProfile()
+  const { data, loading, error, refetch } = useBearProfile()
 
   // State for level-up overlay
   const prevLevelRef = useRef<string | null>(null)
@@ -104,53 +103,6 @@ export function CommunityBearPage() {
         <h1 className="un-community-page__title">Community Bear</h1>
       </div>
 
-      {/* Dev Controls (Only in development) */}
-      <div style={{
-        padding: '16px',
-        background: 'var(--color-surface-variant)',
-        borderRadius: '12px',
-        marginBottom: '24px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        border: '1px dashed var(--color-outline)'
-      }}>
-        <strong style={{ fontSize: '14px', color: 'var(--color-on-surface-variant)' }}>Dev Controls:</strong>
-        <Button 
-          variant="secondary" 
-          size="sm" 
-          onClick={() => {
-            mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: prev.submitted + 10 } : null);
-            apiSend('/api/gamification/dev-update', 'POST', { action: 'add_submitted' })
-              .then(() => refetch());
-          }}
-        >
-          +10 Submitted
-        </Button>
-        <Button 
-          variant="secondary" 
-          size="sm" 
-          onClick={() => {
-            mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: prev.submitted + 10, resolved: prev.resolved + 10 } : null);
-            apiSend('/api/gamification/dev-update', 'POST', { action: 'add_resolved' })
-              .then(() => refetch());
-          }}
-        >
-          +10 Resolved
-        </Button>
-        <Button 
-          variant="secondary" 
-          size="sm" 
-          style={{ color: 'var(--color-error)' }}
-          onClick={() => {
-            mutate((prev: BearProfileData | null) => prev ? { ...prev, submitted: 0, resolved: 0, currentLevel: 'Bronze', gear: prev.gear.map((g: GearItem) => ({ ...g, unlocked: false })) } : null);
-            apiSend('/api/gamification/dev-update', 'POST', { action: 'reset' })
-              .then(() => refetch());
-          }}
-        >
-          Reset Stats
-        </Button>
-      </div>
 
       {/* Community Bear profile with stats, progress, avatar & gear */}
       <CommunityBearProfile

@@ -11,6 +11,19 @@
   gap: var(--space-sm);
 }
 
+.un-community-bear__avatar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  max-width: 777px;
+  height: 309px;
+  border-radius: var(--radius-lg);
+  margin: 0 auto;
+}
+
 .un-community-bear__section-title {
   font-size: var(--text-lg);
   font-weight: var(--weight-semibold);
@@ -39,4 +52,15 @@
 .un-community-bear__level-subtitle {
   font-size: var(--text-sm);
   color: var(--color-on-surface-variant);
+}
+
+@media (max-width: 768px) {
+  .un-community-bear__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .un-community-bear__avatar-card {
+    height: auto;
+    padding: 24px;
+  }
 }

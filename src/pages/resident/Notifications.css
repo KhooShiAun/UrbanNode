@@ -1,89 +1,135 @@
-.notifications-page { 
-  padding: 30px; 
-  width: 100%; 
-  min-height: 100vh; 
-  background: #f7f9f8; 
-} 
-
-.notifications-header { 
-  margin-bottom: 25px; 
-} 
-
-.notifications-header h1 { 
-  font-size: 32px; 
-  color: #22352c; 
-  font-weight: 700; 
-} 
-
-.notifications-container { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 18px; 
+.notifications-page {
+  padding: 24px 56px 48px 56px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
 }
 
-/* ✅ FIX: <button> reset so notification-card looks identical to the old <div>.
-   Without this, browsers apply default button padding, border, background, and
-   font that break the card's visual design. */
+.notifications-header {
+  margin-bottom: 25px;
+}
+
+.notifications-header h1 {
+  font-size: var(--text-3xl);
+  color: var(--color-primary);
+  font-weight: var(--weight-bold);
+}
+
+.notifications-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
 .notification-card {
   /* Button reset */
   appearance: none;
   -webkit-appearance: none;
-  border: none;
+  border: 1px solid var(--color-outline-variant);
   font: inherit;
   text-align: left;
   width: 100%;
 
-  /* Card styles (unchanged from original) */
+  /* Card styles */
   display: flex;
   align-items: center;
   gap: 18px;
   padding: 20px;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all 0.2s ease;
   margin-bottom: 18px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .notification-card:hover {
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-container);
 }
 
-/* ✅ FIX: Visible focus ring for keyboard navigation (replaces the browser
-   default which is often invisible on coloured backgrounds). */
 .notification-card:focus-visible {
-  outline: 3px solid #22c55e;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* DONE = GREEN */
+/* UNREAD = BRAND GREEN ACCENT */
+.notification-card.unread {
+  background: var(--color-surface-container-lowest);
+  border-left: 6px solid var(--color-primary);
+}
+
+.notification-card.unread .notification-icon {
+  background: #e2ede7;
+  color: var(--color-primary);
+}
+
+.notification-card.unread .notification-content p {
+  font-weight: var(--weight-semibold);
+  color: var(--color-on-surface);
+}
+
+/* DONE = SUCCESS GREEN ACCENT */
 .notification-card.done {
-  background: #ecfdf5;
-  border-left: 6px solid #22c55e;
+  background: var(--color-status-resolved-bg);
+  border-left: 6px solid var(--color-status-resolved-fg);
 }
 
-/* IN PROGRESS = YELLOW */
+.notification-card.done .notification-icon {
+  background: var(--color-surface-container-lowest);
+  color: var(--color-status-resolved-fg);
+}
+
+.notification-card.done .notification-content p {
+  color: var(--color-on-surface);
+}
+
+/* IN PROGRESS = AMBER/ORANGE ACCENT */
 .notification-card.in-progress {
-  background: #fffbeb;
-  border-left: 6px solid #f59e0b;
+  background: var(--color-status-in-progress-bg);
+  border-left: 6px solid var(--color-status-in-progress-fg);
 }
 
-/* READ = GREY */
+.notification-card.in-progress .notification-icon {
+  background: var(--color-surface-container-lowest);
+  color: var(--color-status-in-progress-fg);
+}
+
+.notification-card.in-progress .notification-content p {
+  color: var(--color-on-surface);
+}
+
+/* READ = MUTED / GREY */
 .notification-card.read {
-  background: #f3f4f6;
-  border-left: 6px solid #9ca3af;
+  background: var(--color-surface-container-low);
+  border-left: 6px solid var(--color-outline-variant);
+  opacity: 0.85;
+}
+
+.notification-card.read .notification-icon {
+  background: var(--color-surface-container-lowest);
+  color: var(--color-outline);
+}
+
+.notification-card.read .notification-content p {
+  color: var(--color-on-surface-variant);
 }
 
 .notification-icon {
   width: 55px;
   height: 55px;
-  border-radius: 50%;
-  background: #f3f5f4;
+  border-radius: var(--radius-full);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 24px;
   min-width: 55px;
+  transition: transform 0.2s ease;
+}
+
+.notification-card:hover .notification-icon {
+  transform: scale(1.05);
 }
 
 .notification-content {
@@ -94,31 +140,28 @@
 
 .notification-content p {
   margin: 0;
-  color: #22352c;
-  font-size: 15px;
+  font-size: var(--text-base);
 }
 
 .notification-content small {
-  color: #6b7280;
-  font-size: 12px;
+  color: var(--color-on-surface-variant);
+  font-size: var(--text-xs);
 }
 
-/* ✅ FIX: Loading state */
 .notifications-loading {
-  color: #6b7280;
-  font-size: 15px;
+  color: var(--color-on-surface-variant);
+  font-size: var(--text-base);
   padding: 40px 0;
   text-align: center;
 }
 
-/* ✅ FIX: Empty state */
 .notifications-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
   padding: 60px 0;
-  color: #6b7280;
+  color: var(--color-on-surface-variant);
 }
 
 .notifications-empty-icon {
@@ -127,15 +170,20 @@
 
 .notifications-empty p {
   margin: 0;
-  font-size: 15px;
+  font-size: var(--text-base);
 }
 
-/* Error state */
 .notifications-error {
-  color: #dc2626;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 12px;
+  color: var(--color-status-urgent-fg);
+  background: var(--color-status-urgent-bg);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
   padding: 16px 20px;
-  font-size: 15px;
+  font-size: var(--text-base);
+}
+
+@media (max-width: 768px) {
+  .notifications-page {
+    padding: 16px 20px 32px 20px;
+  }
 }

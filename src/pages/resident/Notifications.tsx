@@ -44,7 +44,7 @@ export const Notifications: React.FC = () => {
       case "in_progress":
         return { cardClass: "in-progress", icon: "⏱️" };
       default:
-        return { cardClass: "read", icon: "🔔" };
+        return { cardClass: "unread", icon: "🔔" };
     }
   };
 
