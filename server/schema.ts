@@ -29,6 +29,7 @@ export const reports = pgTable('reports', {
   location_lat: numeric('location_lat'),
   location_lng: numeric('location_lng'),
   photo_url: text('photo_url'),
+  resolved_photo_url: text('resolved_photo_url'),
   // 'urgent' | 'routine' | 'low' | 'uncategorised'
   severity: text('severity').notNull().default('uncategorised'),
   // 'new' | 'in_progress' | 'resolved' | 'uncategorised'

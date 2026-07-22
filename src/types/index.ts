@@ -16,6 +16,7 @@ export interface Report {
   location_lat?: string | null
   location_lng?: string | null
   photo_url?: string | null
+  resolved_photo_url?: string | null
   severity: 'urgent' | 'routine' | 'low' | 'uncategorised'
   status: 'new' | 'in_progress' | 'resolved' | 'uncategorised'
   sla_deadline?: string | null

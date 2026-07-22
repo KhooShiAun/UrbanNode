@@ -8,6 +8,7 @@ import { type Report, type User } from '@/types'
 import { TicketHeader } from './components/TicketHeader'
 import { DescriptionCard } from './components/DescriptionCard'
 import { LocationCard } from './components/LocationCard'
+import { BeforeAfterCard } from './components/BeforeAfterCard'
 import { AiAssessmentCard } from './components/AiAssessmentCard'
 import { SlaCard } from './components/SlaCard'
 import { AssigneeStatusForm } from './components/AssigneeStatusForm'
@@ -44,6 +45,7 @@ export function TicketDetail() {
   const [notes, setNotes] = useState<string>('')
   const [severity, setSeverity] = useState<string>('')
   const [slaDeadline, setSlaDeadline] = useState<string>('')
+  const [resolvedPhotoUrl, setResolvedPhotoUrl] = useState<string | null>(null)
 
   const formatForDateTimeInput = (dateString?: string | null) => {
     if (!dateString) return ''
@@ -78,6 +80,7 @@ export function TicketDetail() {
           setNotes(reportData.resolution_notes ?? '')
           setSeverity(reportData.severity)
           setSlaDeadline(formatForDateTimeInput(reportData.sla_deadline))
+          setResolvedPhotoUrl(reportData.resolved_photo_url ?? null)
         }
       })
       .catch((err) => {
@@ -110,6 +113,7 @@ export function TicketDetail() {
         resolution_notes: notes,
         severity,
         sla_deadline: parsedSla,
+        resolved_photo_url: resolvedPhotoUrl,
       })
 
       showToast('Changes saved successfully', 'success')
@@ -122,6 +126,7 @@ export function TicketDetail() {
       setNotes(updated.resolution_notes ?? '')
       setSeverity(updated.severity)
       setSlaDeadline(formatForDateTimeInput(updated.sla_deadline))
+      setResolvedPhotoUrl(updated.resolved_photo_url ?? null)
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Failed to save changes.', 'error')
     } finally {
@@ -140,6 +145,7 @@ export function TicketDetail() {
         assignee_id: targetAssigneeId,
         status: nextStatus,
         resolution_notes: notes || (isResolved ? '' : 'Ticket marked as resolved.'),
+        resolved_photo_url: isResolved ? null : resolvedPhotoUrl,
       })
 
       showToast(isResolved ? 'Ticket re-opened' : 'Ticket marked as resolved', 'success')
@@ -152,6 +158,7 @@ export function TicketDetail() {
       setNotes(updated.resolution_notes ?? '')
       setSeverity(updated.severity)
       setSlaDeadline(formatForDateTimeInput(updated.sla_deadline))
+      setResolvedPhotoUrl(updated.resolved_photo_url ?? null)
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Failed to update resolution status.', 'error')
     } finally {
@@ -233,6 +240,11 @@ export function TicketDetail() {
             description={report.description}
             createdAt={report.created_at}
           />
+          <BeforeAfterCard
+            beforePhotoUrl={report.photo_url}
+            afterPhotoUrl={report.resolved_photo_url}
+            isWorker={true}
+          />
           <LocationCard
             locationText={report.location_text}
             locationLat={report.location_lat}
@@ -262,6 +274,8 @@ export function TicketDetail() {
             setSeverity={setSeverity}
             slaDeadline={slaDeadline}
             setSlaDeadline={setSlaDeadline}
+            resolvedPhotoUrl={resolvedPhotoUrl}
+            setResolvedPhotoUrl={setResolvedPhotoUrl}
           />
 
           <TicketTimeline events={report.timeline} />

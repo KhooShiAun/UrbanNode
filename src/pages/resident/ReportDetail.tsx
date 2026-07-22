@@ -5,6 +5,7 @@ import { Badge, Button, Card, EmptyState, Spinner, useToast } from '@/components
 import { AlertCircle, ArrowLeft, Clock, MapPin } from '@/components/icons'
 import { type Report } from './reportDetail.mock'
 import { ReportTimeline } from './ReportTimeline'
+import { BeforeAfterCard } from '../worker/components/BeforeAfterCard'
 import { formatCode, formatDateTime, severityBadge, slaRemaining, statusBadge } from './reportFormat'
 import './ReportDetail.css'
 
@@ -152,6 +153,12 @@ export function ReportDetail() {
               Submitted on {formatDateTime(report.created_at)}
             </p>
           </Card>
+
+          <BeforeAfterCard
+            beforePhotoUrl={report.photo_url}
+            afterPhotoUrl={report.resolved_photo_url}
+            isWorker={false}
+          />
 
           <Card variant="bordered" className="report-section">
             <h2 className="report-section__title">Location</h2>

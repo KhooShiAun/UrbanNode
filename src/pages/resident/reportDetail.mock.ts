@@ -14,6 +14,7 @@ export type Report = {
   location_lat: string | null
   location_lng: string | null
   photo_url: string | null
+  resolved_photo_url: string | null
   severity: string
   status: string
   sla_deadline: string | null

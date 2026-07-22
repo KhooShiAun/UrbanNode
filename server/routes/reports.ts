@@ -278,7 +278,7 @@ router.patch('/:id', requireAuth, async (req, res, next) => {
       return res.status(400).json({ error: 'Invalid report id' })
     }
 
-    const { severity, status, assignee_id, sla_deadline, resolution_notes, notes } = req.body ?? {}
+    const { severity, status, assignee_id, sla_deadline, resolution_notes, notes, resolved_photo_url } = req.body ?? {}
 
     // Fetch the report to get owner's user_id and existing status
     const [report] = await db
@@ -301,6 +301,9 @@ router.patch('/:id', requireAuth, async (req, res, next) => {
     }
     if (resolution_notes !== undefined) {
       updates.resolution_notes = resolution_notes
+    }
+    if (resolved_photo_url !== undefined) {
+      updates.resolved_photo_url = resolved_photo_url
     }
 
     // Update report

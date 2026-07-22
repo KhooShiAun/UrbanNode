@@ -1,4 +1,5 @@
 import { Button, Card, TextArea } from '@/components/ui'
+import { Camera } from '@/components/icons'
 
 interface Worker {
   id: number
@@ -27,6 +28,8 @@ interface AssigneeStatusFormProps {
   setSeverity: (val: string) => void
   slaDeadline: string
   setSlaDeadline: (val: string) => void
+  resolvedPhotoUrl: string | null
+  setResolvedPhotoUrl: (val: string | null) => void
 }
 
 export function AssigneeStatusForm({
@@ -46,6 +49,8 @@ export function AssigneeStatusForm({
   setSeverity,
   slaDeadline,
   setSlaDeadline,
+  resolvedPhotoUrl,
+  setResolvedPhotoUrl,
 }: AssigneeStatusFormProps) {
   const handleSeverityChange = (newSev: string) => {
     setSeverity(newSev)
@@ -71,6 +76,27 @@ export function AssigneeStatusForm({
     if (!assigneeId) return 'Unassigned'
     const worker = workers.find((w) => String(w.id) === assigneeId)
     return worker ? worker.full_name : 'Unknown Worker'
+  }
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please choose an image file.')
+      return
+    }
+    const MAX_PHOTO_BYTES = 5 * 1024 * 1024
+    if (file.size > MAX_PHOTO_BYTES) {
+      alert('Image must be 5MB or smaller.')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      setResolvedPhotoUrl(reader.result as string)
+    }
+    reader.readAsDataURL(file)
   }
 
   return (
@@ -189,6 +215,78 @@ export function AssigneeStatusForm({
             disabled={loading}
             rows={3}
           />
+        </div>
+
+        <div className="ticket-form__field">
+          <label className="ticket-form__label">Resolution Photo</label>
+          {resolvedPhotoUrl ? (
+            <div className="resolved-photo-preview-container" style={{ position: 'relative', marginTop: '8px' }}>
+              <img
+                src={resolvedPhotoUrl}
+                alt="Resolved aftermath preview"
+                className="resolved-photo-preview-img"
+                style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: 'var(--radius-md)' }}
+              />
+              <button
+                type="button"
+                className="resolved-photo-remove-btn"
+                onClick={() => setResolvedPhotoUrl(null)}
+                disabled={loading}
+                style={{
+                  position: 'absolute',
+                  top: '8px',
+                  right: '8px',
+                  background: 'rgba(0, 0, 0, 0.6)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '24px',
+                  height: '24px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                }}
+                title="Remove photo"
+              >
+                &times;
+              </button>
+            </div>
+          ) : (
+            <div className="resolved-photo-upload-trigger" style={{ marginTop: '8px' }}>
+              <label
+                htmlFor="resolved-photo-input"
+                className="photo-upload-label"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '12px',
+                  background: 'var(--color-surface-container-low)',
+                  border: '1px dashed var(--color-outline-variant)',
+                  borderRadius: 'var(--radius-md)',
+                  cursor: 'pointer',
+                  fontSize: 'var(--text-sm)',
+                  fontWeight: 'var(--weight-semibold)',
+                  color: 'var(--color-on-surface-variant)',
+                  transition: 'background-color 0.2s ease',
+                }}
+              >
+                <Camera size={18} style={{ marginRight: '8px' }} />
+                Attach Aftermath Photo
+              </label>
+              <input
+                id="resolved-photo-input"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                disabled={loading}
+                style={{ display: 'none' }}
+              />
+            </div>
+          )}
         </div>
 
         <Button type="submit" variant="primary" loading={loading} fullWidth>
