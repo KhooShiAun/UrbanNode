@@ -9,6 +9,21 @@ import { calculateDeadline } from '../utils/deadline.ts'
 
 const router = Router()
 
+const nonPhotoColumns = {
+  id: reports.id,
+  user_id: reports.user_id,
+  description: reports.description,
+  location_text: reports.location_text,
+  location_lat: reports.location_lat,
+  location_lng: reports.location_lng,
+  severity: reports.severity,
+  status: reports.status,
+  sla_deadline: reports.sla_deadline,
+  assignee_id: reports.assignee_id,
+  resolution_notes: reports.resolution_notes,
+  created_at: reports.created_at,
+}
+
 // Numeric (lat/lng) columns are stored as text by drizzle's `numeric` type.
 // Accept a finite number, otherwise store null.
 function toNumericString(value: unknown): string | null {
@@ -21,7 +36,7 @@ function toNumericString(value: unknown): string | null {
 router.get('/all', requireWorker, async (_req, res, next) => {
   try {
     const rows = await db
-      .select()
+      .select(nonPhotoColumns)
       .from(reports)
       .orderBy(desc(reports.created_at))
 
@@ -99,7 +114,7 @@ router.get('/', requireAuth, async (req, res, next) => {
       const total = Number(countResult?.count || 0)
       
       const data = await db
-        .select()
+        .select(nonPhotoColumns)
         .from(reports)
         .where(whereClause)
         .orderBy(orderByClause)
@@ -115,7 +130,7 @@ router.get('/', requireAuth, async (req, res, next) => {
       })
     } else {
       const rows = await db
-        .select()
+        .select(nonPhotoColumns)
         .from(reports)
         .where(whereClause)
         .orderBy(orderByClause)
